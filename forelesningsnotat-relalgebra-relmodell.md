@@ -489,29 +489,3 @@ CREATE TABLE IF NOT EXISTS emneregistreringer (
     UNIQUE(student_id, emne_id, semester)
 );
 ```
-
-# Eksempler fra IN2090
-- eksempel (endre eksemplet i forhold til den modellen som vi har brukt til nå) på en relasjon som inneholder 6 feil: {studenter: {student_id: text, : text, Nummer: text, By: , Gate: text, Nummer: int, Postnummer: int}, {{"ola at online dot no", "Ola Norman", "01028912345", "Oslo", "Gateveien", 2, "ukjent"}, {}, {}}}
-	- 1: mangler navn på attributt med andre sekvensielle posisjonen fra venstre til høyre
-	- 2-3: to attributter med samme navn "Nummer" (men forskjellige typer, men fortsatte feil)
-	- 4: attributt By mangler type (kanskje mulig?)
-	- 5: Postnummer har typen int og kan derfor ikke være "ukjent"
-	- 6: i Nummer: int kolonne er det en tekst "første"
-- to tabeller, som har både kolonner og rader i forskjellig rekkefølgen, kan være like, hvis innen sammen mengden av tupler, attributt-rekkefølgen er lik
-- Eksempel:
-	- For studenter: Brukernavn, navn, etternavn, adresse ... 
-	- For emne: emnenavn (fagkode + emnekode), tittel, beskrivelse, studiepoeng ....
-	- Mulig spørring: hvem har fått hvilken karakter i hva
-	- Forslag med alt i en relasjon: Brnavn, Navn, Etternavn, Adresse, Emnekode, Emnenummer, Tittel, Beskrivelse, AntSP, Kara
-	- Ulemper med en relasjon: duplisering av data, utfordrende å opprettholde integritet
-	- Forslag: modellere med flere relasjoner, - studenter, emner, emneregistreringer, programmer
-
-
-# Caser for K7
-- [CASE1] En bygning er en identifisert ved en bygningsnummer. For hver bygning blir det registrert antall etasjer, areal og bygningstype (fritidsbygg, enebolig, garasjebygg osv.). Tegn ER-diagrammet. Anta så at bygningstyper blir ulikt avgiftsbelagt. Endre modeller slik at avgiftsbeløp for hver bygningstype blir lagret. 
-- [CASE2] Et universitet tilbyr flere studier. Hvert studium er bygd opp fra emne. Hvert emne har en emnekode, en tittel, en beskrivelse og gir et antall studiepoeng. Noen kurs bygger på andre. Studenter blir tatt opp til studier, og får et unikt studentnummer. Om hver student blir navn, adresse og telefonnummer lagret. En student avlegger eksamen i et antall emner hvert semester, og får en karakter (A til F) i hvert emne. Studentene kan seinere forbedre karakteren i et kurs ved å gå opp til ny eksamen. Ved gjentatt eksamen i samme emne vil den beste karakteren gjelde, men samtlige eksamenskarakterer skal lagres. Om hver eksamensavvikling skal rom og tidspunkt lagres. 
-- [CASE3] Betrakt en database for å representere enkle ER-diagrammer. Tenk at databasen skal brukes av et modelleringsverktøy for å lagre diagrammer som brukerne konstruerer (som et alternativ til lagring av filer). Krav: (1) Til et ER-diagram er det knyttet et entydig navn, en forfatter, dato diagrammet ble opprettet og dato når den sist ble endret. Et diagram inneholder entiteter og forhold. (2) Enhver entitet har et navn og et antall attributter. Hvert attributt har at navn og en datatype. Lovlige datatyper er INTEGER, FLOAT, CHAR og BOOLEAN. Attributter med datatypen CHAR har en spesifisert lengde (antall tegn). (3) En eller flere attributter utgjør identifikatoren til en entitet. (4) Et forhold knytter sammen to entiteter, som kalles fra-entiteten og til-entiteten. Ethvert forhold har et navn. I et forhold har både fra-entiteten og til-entiteten maksimums- og minimumsverdier. Lovlige minimumsverdier er 0 og 1, mens lovlige maksimumsversdier er 1 og MANGE. (5) Navn på entiteter og forhold er unike innen et diagram, og det finnes ikke to attributter med samme navn i en entitet. Systemet skal lagre data om mange diagrammer, og det er tillatt å bruke samme navn på entiteter og forhold i forskjellige diagrammer. (6) Det skal også lagres informasjon som har å gjøre med presentasjon av diagrammene. Det skal være mulig å velge fonter og farger for navn på entiteter og attributter. Brukeren kan styre plassering av entiteter på skjermen. Posisjon og størrelse entitetene skal lagrs. Lag en datamodell for systemet, det vil si et ER-diagram som beskriver ER! Merk at beskrivelsen over er en forenkling av ER. Blant annet så er svake entiteter, identifiserende forhold og subtyper utelatt. 
-- [CASE4] Et idrettsforbund trenger å lage data om klubber og utøvere. Hver klubb har et navn og en lokasjon. En klubb drives av en styre som består av styreleder, kasserer, rosjef og materialsjef. Klubben har også enten ansatte eller frivillige trenere, Klubbmedlemmene (utøvere) kan deles inn i U13, U15, U17, U19, U23, senior, masters og mosjons klasser. Utøvere i alle klasser kan gjennomføre standardiserte tester tre ganger i sesongen (uke 44, 2 og 11). En sesong varer fra oktober til september. Idrettsforbund registrerer også flere typer tester for de beste utøvere fra klubbene. Eksempel på tester er standardiserte laktatmålinger og VO2max-målinger. Det skal også registreres målinger fra diverse sensorer fra enkelte treningsøkter. Om en treningsøkt registreres det dato, starttid, sluttid (kan være NULL hvis økten ikke blir gjennomført), beskrivelse, intensitet og filer med sensormålinger (kan være store mengder med data). 
-
-
-https://mermaid.ai/open-source/syntax/entityRelationshipDiagram.html
