@@ -428,7 +428,7 @@ data1500_db=# select student_id, emne_id, min(karakter) as beste from emneregist
 
 **DIVERSE VEDLEGG**
 
-** Nyttige tegn for relasjonsalbebra **
+**Nyttige tegn for relasjonsalbebra**
 ```
 ∪ union 222A
 ∩ intersection 2229)
