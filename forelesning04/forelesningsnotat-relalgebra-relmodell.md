@@ -3,11 +3,11 @@
 - Historikken om databaseteorien: begynte med grafer (nettverksmodell) eksponert for et spesifikt programmeringsspråk.
 - Historikken om databaseteorien: hierarkiske databaser som en forenkling av nettverksdatabaser.
 - Historikken om databaseteorien: 1970 E. F. Codd introduserte relasjonsdatabaser og i 1977 laget Oracle et databasehåndteringssystem basert på relasjonsmodellen
-- Objekt-Orientert Modell (1980-1990-tallet) Denne modellen forsøkte å kombinere objekt-orientert programmering med databaser, noe som førte til systemer som O2, ObjectStore og senere objektrelasjonelle databaser. Selv om den ikke dominerte markedet fullstendig, introduserte den viktige konsepter som arv, polymorfisme og komplekse datatyper i databasesammenheng. Diverse ORM løsnigner er forstatt populære, men møter en viss kritikk for å bruke unødvendig mye ressurser og være utsatt for "bugs". 
-- NoSQL-Revolusjon (2000-tallet og framover) Med veksten av internett og Big Data oppsto et behov for databaser som kunne håndtere massive mengder ustrukturert data, høy tilgjengelighet og horisontal skalering. Dette førte til NoSQL-bevegelsen med dokumentdatabaser (MongoDB), nøkkel-verdi-lagre (Redis), søkedatabaser (Elasticsearch) og grafbaser (Neo4j). Dette var et paradigmeskifte fordi det brøt med ACID-garantiene og den stive relasjonelle skjemaet.
-- En arkitektur-filosofi for database i dag, i 2026 kan være :
-Distribuert arkitektur: Databasene er spredt over flere noder/servere for å oppnå høy tilgjengelighet, fault tolerance og horisontale skalering. Systemer som PostgreSQL med Citus, CockroachDB og Spanner er eksempler på distribuerte SQL-databaser.
-    -Polyglot Persistence: Organisasjoner velger den beste databaseteknologien for hver spesifikk oppgave, i stedet for å tvinge alt inn i én modell. En moderne applikasjon kan bruke PostgreSQL for kjernedataene, Redis for caching, Elasticsearch for søk, og Neo4j for sosiale grafer.
+- Objekt-Orientert Modell (1980-1990-tallet) Denne modellen forsøkte å kombinere objekt-orientert programmering med databaser, noe som førte til systemer som O2, ObjectStore og senere objektrelasjonelle databaser. Selv om den ikke dominerte markedet fullstendig, introduserte den viktige konsepter som arv, polymorfisme og komplekse datatyper i databasesammenheng. Diverse ORM løsnigner er forstatt populære, men møter en viss kritikk for å bruke unødvendig mye ressurser og gjøre komplekse problemstillinger mer komplekse (https://dev.to/cies/the-case-against-orms-5bh4 , https://dev.to/diploi/why-we-dont-use-an-orm-and-why-you-probably-shouldnt-4cfo).
+- NoSQL-Revolusjon (2000-tallet og framover) Med veksten av internett og Big Data oppsto et behov for databaser som kunne håndtere massive mengder ustrukturert data, høy tilgjengelighet og horisontal skalering. Dette førte til NoSQL-bevegelsen med dokumentdatabaser (MongoDB), nøkkel-verdi-lagre (Redis), søkedatabaser (Elasticsearch) og grafbaser (Neo4j). Dette var et paradigmeskifte fordi det brøt med ACID-garantiene og det "stive" relasjonelle skjemaet.
+- En arkitektur-filosofi for database i dag, i 2026, kan beskrives med:
+    - Distribuert arkitektur: Databasene er spredt over flere noder/servere for å oppnå høy tilgjengelighet, feiltolerance og horisontal skalering. Systemer som PostgreSQL med Citus, CockroachDB og Spanner er eksempler på distribuerte SQL-databaser.
+    - Polyglot Persistence: Organisasjoner velger den beste databaseteknologien for hver spesifikk oppgave, i stedet for å tvinge alt inn i én modell. En moderne applikasjon kan bruke PostgreSQL for kjernedataene, Redis for caching, Elasticsearch for søk, og Neo4j for sosiale grafer.
     - Hybrid SQL/NoSQL: Moderne databaser som PostgreSQL har inkorporert NoSQL-funksjoner (JSON-kolonner, JSONB, full-text search), mens NoSQL-databaser som MongoDB nå tilbyr ACID-transaksjoner. Grensen mellom SQL og NoSQL blir mindre skarp.
 - Relasjonsmodellen er optimal for strukturert, transaksjonell data med ACID-garantier, men den skalerer ikke horisontalt og er rigid når det gjaldt skjemaer. NoSQL løste skalerings- og fleksibilitetsproblemene, og ofret konsistens og spørringsfleksibilitet. Hybride modeller forsøker å få det beste fra begge verdener.
 - Den mest kjente eksempel på data representert i relasjonsmodellen, er tabell med rader og kolonner. 
@@ -17,9 +17,9 @@ Distribuert arkitektur: Databasene er spredt over flere noder/servere for å opp
 - RM beskriver henting og manipulering av data, som er representert som relasjoner.
 - RM er en full beskrivelse (formell og presis) av hvordan relasjoner brukes for å beskrive data.
 - En relasjon består av en signatur og en mengde med tupler.
-- Mengde er en samling av unike elementer som er uordnet, f. eks. {1,2,3} = {3,1,2}.
-- Tuppel er en liste med verdier som er ordnet, f. eks. {1,2,Mickey} ikke lik {1,Mickey,2}.
-- Kan representere en tabell med mengde og tupler, dvs. med en signatur (studenter(student_id, fornavn, etternavn, program)) og en mengde med tupler (101,Mickey,CS), (102,Daffy,EE), ...
+- Mengde er en samling av unike elementer som er uordnet, f. eks. `{1,2,3} = {3,1,2}`.
+- Tuppel er en liste med verdier som er ordnet, f. eks. `{1,2,Mickey}` ikke lik `{1,Mickey,2}`.
+- Kan representere en tabell med mengde og tupler, dvs. med en signatur (studenter(student_id, fornavn, etternavn, program)) og en mengde med tupler `(101,Mickey,CS)`, `(102,Daffy,EE)`, ...
 - Tupler er rader med felt/attributter/kolonneverdier, som er ordnet. 
 - Tabell er en mengde av tupler, som er uordnet (rader er ikke ordnet/sortert). 
 - Tabell kalles en relasjon når man bruker språket til relasjonsalgebra.
@@ -30,11 +30,11 @@ Distribuert arkitektur: Databasene er spredt over flere noder/servere for å opp
 - Relasjonsskjema er en mengde med relasjonssignaturer (mengde med tabeller). 
 - Et attributt (kan betraktes som en verdi i en kolonne i en tabell) består av et navn og en type (også kalt domene).
 - To attributter kan ikke ha samme navn i samme relasjon (unike navn for kolonner i en tabell).
-- Dataene i en relasjon representeres med tupler (student_id: 101, fornavn: "Mickey", program: "CS").
-- Mer oversiktlig å presentere som navn-og-verdi-par (key-value på engelsk) enn som tupler med bare verdier (101, "Mickey", "CS"), hvor man må referere til elementene i tuppelen med posisjon, f. eks. posisjon 1: 101, posisjon 2: "Mickey", posisjon 3: "CS".
+- Dataene i en relasjon representeres med tupler `(student_id: 101, fornavn: "Mickey", program: "CS")`.
+- Mer oversiktlig å presentere som navn-og-verdi-par (key-value på engelsk) enn som tupler med bare verdier `(101, "Mickey", "CS")`, hvor man må referere til elementene i tuppelen med posisjon, f. eks. `posisjon 1: 101, posisjon 2: "Mickey", posisjon 3: "CS"`.
 - En tuppel kalles instans og mengden av tupler kalles for relasjonsinstans (noen ganger refereres det til likhet med klasse og instans i den objekt-orienterte modellen).
 - En tuppel skal inneholdet kun atomære verdier og av samme type (gjelder relasjonsmodellen, dvs. det som brukes i relasjonsdatabaser, som er en spesifikk type av databaser og som vi fokuserer på mest i dette emne).
-- "atomært" er vagt, det avhenger av kontekst, men man kan si at verdien må kunne brukes som en enhet uten at den må "pakkes ut" (f. eks. ett telefonnummer +4794939493 og ikke en liste med telefonnumre [+4794939493, +4723449434], som man kunne modellert som (navn: text, telefonnummer: liste?); liste er ikke atomær).
+- "atomært" er vagt, det avhenger av kontekst, men man kan si at verdien må kunne brukes som en enhet uten at den må "pakkes ut" (f. eks. ett telefonnummer `+4794939493` og ikke en liste med telefonnumre `[+4794939493, +4723449434]`, som man kunne modellert som `(navn: text, telefonnummer: liste?)`; liste er ikke atomær).
 - NULL: markerer manglende eller ukjent verdi (ofte vises som blanke celler i presentasjoner i grensesnitt programer og regnark). 
 - Kan bruke NULL på alle typer (int, float, varchar, osv.).
 - Rekkefølgen av rader er ikke en egenskap av en relasjon/tabell (det er en uordnet mengde). 
@@ -95,7 +95,7 @@ Distribuert arkitektur: Databasene er spredt over flere noder/servere for å opp
     - nøkkellengde (sammensatte nøkler kan bli lange, f. eks. student_id + emne_id + semester og det kan påvirke ytelse for indekser)
     - referanseintegritet (mer utfordrende å håndtere endringer, krever nøye planlegging av begrensninger/constraints)
     - migrering (overføring av data fra et sted til et annen, f. eks. i tilfelle backup eller oppdatering av applikasjoner) kan være komplekst
-- Kunstige (ikke vandrede) ID-er er generelt det tryggeste valget.
+- Kunstige (ikke vandrende) ID-er er generelt det tryggeste valget.
 - Finn alle supernøkler for **{emneregistreringer: {registrering_id: int, student_id: int, emne_id: int, semester: text, karakter: varchar, registrert_dato: timestamp}}** 
     - (1) alle attributter er en supernøkkel
     - (2) kunstig ID registrering_id er en supernøkkel, som et bevisst valg
@@ -181,7 +181,7 @@ Eksempel: ( {1} ∪ ( {3,4} ∖ {4,5} ) ) ∩ {1,2,3} ?
    - i uttrykk brukes konstanter 3423, 10, IN osv.
  - hvis vi ser på relasjon `studenter` fra forrige eksemplet, så blir det en seleksjon av alle studentene hvis fornavn begynner med 'O' (Ola, f.eks.) og som tilhører program med program_id 1 
      - resulatet blir en ny relasjon som inneholder dataene for alle attributter som har fornavn som begynner med 'O' og hvor program_id er 1
-     - (1, 'Ola', 'Nordmann', 'ola.nordmann at student.oslomet.no', 1, '2026-01-20 19:42:24.242378')
+     - `(1, 'Ola', 'Nordmann', 'ola.nordmann at student.oslomet.no', 1, '2026-01-20 19:42:24.242378')` 
  - `begynner med 'O'` i Postgresql-syntaks blir `like 'O%'`, ∧ blir and
      - hvor % representerer null eller flere tegn, dvs. at det kan være hvilke som helst tegn (eller ingen tegn) etter den spesifiserte bokstaven.
  ```
@@ -220,6 +220,7 @@ data1500_db=# select student_id, fornavn navn, etternavn, epost, program_id stud
 - resultat-relasjon består av alle attributtene til begge relasjonene og alle kombinasjonene av tupler fra begge relasjonene
 - eksempel med studenter × programmer 
 - dette er innholdet i relasjonen studenter (4 tupler)
+```sql
 data1500_db=# select * from studenter;
  student_id | fornavn | etternavn |              epost               | program_id |         opprettet          
 ------------+---------+-----------+----------------------------------+------------+----------------------------
@@ -227,15 +228,19 @@ data1500_db=# select * from studenter;
           2 | Kari    | Normann   | kari.normann_student.oslomet.no  |          1 | 2026-01-20 19:42:24.242378
           3 | Per     | Larsen    | per.larsen_student.oslomet.no    |          2 | 2026-01-20 19:42:24.242378
           4 | Anna    | Johansen  | anna.johansen_student.oslomet.no |          3 | 2026-01-20 19:42:24.242378
+```
 - dette er innholdet i relasjonen programmer (3 tupler)
+```sql
 data1500_db=# select * from programmer;
  program_id |  program_navn  |        beskrivelse        |         opprettet          
 ------------+----------------+---------------------------+----------------------------
           1 | Informatikk    | Bachelor i Informatikk    | 2026-01-20 19:42:24.241526
           2 | Data Science   | Bachelor i Data Science   | 2026-01-20 19:42:24.241526
           3 | Cybersikkerhet | Bachelor i Cybersikkerhet | 2026-01-20 19:42:24.241526
+```
 - dette er kartesisk produkt av begge relasjonene (3 x 4 = 12 tupler)
-- data1500_db=# select * from studenter, programmer;
+```sql
+data1500_db=# select * from studenter, programmer;
  student_id | fornavn | etternavn |              epost               | program_id |  opprettet    | program_id |  program_navn  |        beskrivelse        |  opprettet    
 ------------+---------+-----------+----------------------------------+------------+---------------+------------+----------------+---------------------------+---------------
           1 | Ola     | Nordmann  | ola.nordmann_student.oslomet.no  |          1 | 2026-01-20... |          1 | Informatikk    | Bachelor i Informatikk    | 2026-01-20 ...
@@ -251,6 +256,7 @@ data1500_db=# select * from programmer;
           3 | Per     | Larsen    | per.larsen_student.oslomet.no    |          2 | 2026-01-20... |          3 | Cybersikkerhet | Bachelor i Cybersikkerhet | 2026-01-20 ...
           4 | Anna    | Johansen  | anna.johansen_student.oslomet.no |          3 | 2026-01-20... |          3 | Cybersikkerhet | Bachelor i Cybersikkerhet | 2026-01-20 ...
 (12 rows)
+```
 - må være forsiktig med kartesisk produkt med store (mye data) relasjoner og vi har skjeldent behov for kartesisk produkt, siden kun slavisk kombinerer alle tupler i to relasjoner og det har sjeldent en mening for spørsmål som stilles til vår datamodell
 - det er derfor vanlig å bruke en seleksjon på kartesisk produkt, f.eks. selekter alle tupler/rader, som viser hvilket program studenten går på 
 - avhengig av hvordan vi har implementert den faktiske databasen (med CREATE kommandoen), så har vi vanligvis like navn på tabeller som er koblet sammen ved hjelp av en fremmednøkkel
@@ -259,18 +265,21 @@ data1500_db=# select * from programmer;
 - f.eks. 𝜌_program_id→program(studenter)
 - 𝜎_(program = program_id)(𝜌_program_id→program(studenter) × programmer)
 - i postgresql: 
-	- data1500_db=# select * from (select student_id, fornavn, etternavn, epost, program_id program, opprettet from studenter) as omdopt_studenter, programmer where program = program_id;
-	- dette blir noe "klønete", så det finnes snarveier i syntaksen for de fleste dbhs-er, som dere vil finne ut etterhvert
+    - her ser vi en relasjon som besvarer vårt spørsmål, dvs. vi kombinerer dataene fra flere relasjoner
+```sql
+data1500_db=# select * from (select student_id, fornavn, etternavn, epost, program_id program, opprettet from studenter) as omdopt_studenter, programmer where program = program_id;
+
  student_id | fornavn | etternavn |              epost               | program_id |  opprettet    | program_id |  program_navn  |        beskrivelse        |  opprettet    
 ------------+---------+-----------+----------------------------------+------------+---------------+------------+----------------+---------------------------+---------------
           1 | Ola     | Nordmann  | ola.nordmann_student.oslomet.no  |          1 | 2026-01-20... |          1 | Informatikk    | Bachelor i Informatikk    | 2026-01-20 ...
           2 | Kari    | Normann   | kari.normann_student.oslomet.no  |          1 | 2026-01-20... |          1 | Informatikk    | Bachelor i Informatikk    | 2026-01-20 ...
           4 | Anna    | Johansen  | anna.johansen_student.oslomet.no |          3 | 2026-01-20... |          3 | Cybersikkerhet | Bachelor i Cybersikkerhet | 2026-01-20 ...
           3 | Per     | Larsen    | per.larsen_student.oslomet.no    |          2 | 2026-01-20... |          2 | Data Science   | Bachelor i Data Science   | 2026-01-20 ...
-- her ser vi en relasjon som besvarer vårt spørsmål, dvs. vi kombinerer dataene fra flere relasjoner
+```
 - gjør selv en projekson 𝜋_fornavn,etternavn,program_navn,beskrivelse på seleksjon anvendt på kartesisk produkt
 - 𝜋_fornavn,etternavn,program_navn,beskrivelse(𝜎_(program = program_id)(𝜌_program_id→program(studenter) × programmer))
-- data1500_db=# select fornavn, etternavn, program_navn, beskrivelse from (select student_id, fornavn, etternavn, epost, program_id program, opprettet from studenter) as omdopt_studenter, programmer where program = program_id;
+```sql
+data1500_db=# select fornavn, etternavn, program_navn, beskrivelse from (select student_id, fornavn, etternavn, epost, program_id program, opprettet from studenter) as omdopt_studenter, programmer where program = program_id;
  fornavn | etternavn |  program_navn  |        beskrivelse        
 ---------+-----------+----------------+---------------------------
  Kari    | Normann   | Informatikk    | Bachelor i Informatikk
@@ -278,9 +287,10 @@ data1500_db=# select * from programmer;
  Per     | Larsen    | Data Science   | Bachelor i Data Science
  Anna    | Johansen  | Cybersikkerhet | Bachelor i Cybersikkerhet
 (4 rows)
+```
 - trenger `as omdopt_studenter`, dvs. trenger å spesifisere en alias i postgresql for å få utført spørringen over
 - observer at relasjon `studenter` refererer til relasjon `programmer` , - det vi kalte for fremmednøkkel (FK)
-- **{programer: {program_id (PK): int, program_navn: text, beskrivelse: text, opprettet: timestamp}}**
+- **{programmer: {program_id (PK): int, program_navn: text, beskrivelse: text, opprettet: timestamp}}**
 - **{studenter: {student_id (PK): int, fornavn: varchar, etternavn: varchar, epost: varchar, program_id (FK): int, opprettet: timestamp}}**
 - en kartesisk produkt sammen med en seleksjon som bruker fremmednøkkel er så vanlig/viktig i spørringer mot data at den har fått et eget navn "join" og det betegnes med symbol ⋈
 
@@ -290,7 +300,9 @@ data1500_db=# select * from programmer;
 - på samme måten kan man gjøre projeksjon på setningen med "join"-syntaksen:
 	- 𝜋_fornavn,etternavn,program_navn,beskrivelse(𝜌_program_id→program(studenter) `⋈_program = program_id` programmer)
 - i postgresql:
-    - data1500_db=# select fornavn, etternavn, program_navn, beskrivelse from (select student_id, fornavn, etternavn, epost, program_id program, opprettet from studenter) as omdopt_studenter join programmer on program = program_id;
+```sql
+data1500_db=# select fornavn, etternavn, program_navn, beskrivelse from (select student_id, fornavn, etternavn, epost, program_id program, opprettet from studenter) as omdopt_studenter join programmer on program = program_id;
+```
 - oppgave: skriv relasjonsalgebrauttrykk for følgende spørsmål mot modellen "list ut emnenavn med tilsvarende karakter" 
 
 
@@ -298,14 +310,15 @@ data1500_db=# select * from programmer;
     - **{studenter: {person_id (PK): int, fornavn: varchar, etternavn: varchar, epost: varchar, telefon: varchar}}**
     - **{laeringsassistenter: {person_id (PK): int, fornavn: varchar, etternavn: varchar, epost: varchar, telefon: varchar}}**
     - studenter ∪ laeringsassistenter - alle personer i begge tabellene uten duplikater, dvs. både learingsassistene og studentene
-    	- select * from studenter union select * from laeringsassistenter;
+    	- `select * from studenter union select * from laeringsassistenter;`
     - studenter ∩ laeringsassistenter - finner de studentene som også er laeringsassistenter
-    	- select * from studenter intersect select * from laeringsassistenter;
+    	- `select * from studenter intersect select * from laeringsassistenter;`
     - studenter ∖ laeringsassistenter - alle studenter som ikke er læringsassistenter (læringsassistentene blir trukket ut)
-    	- select * from studenter except select * from laeringsassistenter;
+    	- `select * from studenter except select * from laeringsassistenter;`
 - brukes ikke ofte, siden vi sjeldent har to relasjoner med helt like attributter
 
-- her er sql setnignene for å prøve ut union, intersect og except i postgresql (lager en test_database først)
+- her er sql setningene for å prøve ut union, intersect og except i postgresql (lager en test_database først)
+```sql
 data1500_db=# \l
 data1500_db=# CREATE DATABASE test_database WITH TEMPLATE template0;
 ata1500_db=# \l
@@ -328,32 +341,40 @@ test_database=# INSERT INTO laeringsassistenter (fornavn, etternavn, epost, tele
     ('Per', 'Larsen', 'per.larsen_student.oslomet.no', '+4766443543'), 
     ('Hannah', 'Johansoo', 'hannah.johansoo_student.oslomet.no', '+4766202540')
 ON CONFLICT DO NOTHING;
+```
 
 - oppgave "finn navn på alle studenten som kun har fått A"
 - svar med postgresql syntaks: 
-	- mellomledd (finner student_id for alle som kun har fått A) select student_id from emneregistreringer where karakter = 'A' except select student_id from emneregistreringer where karakter != 'A';
-	- select fornavn, etternavn from (select student_id from emneregistreringer where karakter = 'A' except select student_id from emneregistreringer where karakter != 'A') as studenter_med_kun_a join (select student_id s_id, fornavn, etternavn from studenter) as omdopt_studenter on student_id = s_id;
+	- mellomledd (finner student_id for alle som kun har fått A) `select student_id from emneregistreringer where karakter = 'A' except select student_id from emneregistreringer where karakter != 'A';`
+	- `select fornavn, etternavn from (select student_id from emneregistreringer where karakter = 'A' except select student_id from emneregistreringer where karakter != 'A') as studenter_med_kun_a join (select student_id s_id, fornavn, etternavn from studenter) as omdopt_studenter on student_id = s_id;`
 - svar med relasjonsalgebra:
     - 𝜋_student_id(𝜎_(karakter='A')(emneregistreringer))
+```sql
  student_id  
 ------------+
           1 
           3 
+```
     - 𝜋_student_id(𝜎_(karakter≠'A')(emneregistreringer))
+```sql
  student_id |  
 ------------+
           1 
           2 
           4 
-	- 𝜋_student_id(𝜎_(karakter='A')(emneregistreringer)) ∖ 𝜋_student_id(𝜎_(karakter≠'A')(emneregistreringer)) 
+```
+	- 𝜋_student_id(𝜎_(karakter='A')(emneregistreringer)) ∖ 𝜋_student_id(𝜎_(karakter≠'A')(emneregistreringer))
+```sql 
 	student_id  
 ------------+ 
           3 
+```
 	- 𝜋_student_id(𝜎_(karakter='A')(emneregistreringer)) ∖ 𝜋_student_id(𝜎_(karakter≠'A')(emneregistreringer)) `⋈_student_id = s_id` 𝜌_student_id→s_id(studenter))
+```sql
 	 fornavn | etternavn 
 ---------+-----------
  Per     | Larsen
-
+``` 
 
 - oppgave fra OS1-3-2 **Hent studentene med høyeste karakter per emne**
 - svar med postgresql syntaks:
@@ -394,7 +415,7 @@ data1500_db=# select * from emneregistreringer;
     - så vi må også gruppere på student_id siden vi blir spurt om å finne studentene med høyeste karakter
     - gruppering kan bare gjøres hvis vi bruker funksjoner i projeksjon 
     - siden det spørres om "høyeste" karakter, må vi finne en funksjon som kan rangere A høyest og F lavest
-    - siden dette er alfabetisk, så gir funksjon min den bokstaven som er først i alfabetet og karakterer er i en alfabetisk rekkefølge (viktig å sørge for at det ikke er mulig å registrere andre bokstaver enn A-F, eller kan mange spørringer gi andre svar enn forventet; vi ser på constraints senere)
+    - siden dette er alfabetisk, så gir funksjon **`min`** den bokstaven som er først i alfabetet og karakterer er i en alfabetisk rekkefølge (viktig å sørge for at det ikke er mulig å registrere andre bokstaver enn A-F, eller kan mange spørringer gi andre svar enn forventet; vi ser på constraints senere)
     - for hovedjobben kan følgende spørring testes:
 ```sql
 data1500_db=# select student_id, emne_id, min(karakter) as beste from emneregistreringer group by emne_id, student_id;
@@ -405,6 +426,9 @@ data1500_db=# select student_id, emne_id, min(karakter) as beste from emneregist
 - oppgave fra OS1-3-2 **Lag en rapport som viser hver student, deres program, og antall emner de er registrert på**
 - oppgave fra OS1-3-2 **Hent alle studenter som er registrert på både DATA1500 og DATA1100**
 
+**DIVERSE VEDLEGG**
+
+** Nyttige tegn for relasjonsalbebra **
 ```
 ∪ union 222A
 ∩ intersection 2229)
