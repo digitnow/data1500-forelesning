@@ -11,7 +11,7 @@
 - La oss se på det samme eksemplet som vi har brukt så langt, dvs. en datamodell for lagring av informasjon om studenter, emner, programmer og emneregistreringer.
 - Når vi har valgt entiteter, så er vi allerede forbi dem første fasen av kravanalyse. Hvis vi antar at vår kunde er et utdanningsinstitusjon som har dokumentert sine behov (våre krav) på følgende måte:
     - Vi tar opp studenter fortløpende på våre programmer. En student kan bli tatt opp på ett program. Vi trenger å registrere nye studenter og få oversikt over studenter som allerede er registrert hos oss. Vi trenger ofte å søke etter studentnavn (fornavn og etternavn) når vi har studentens e-postadresse.
-    - Studentene må følge ett program, og de kan melde seg på et eller flere emner. Vi må kunne registrere både nye studenter og nye emner uten av studenten må nødvendigvis blir meldt på et emne. 
+    - Studentene må følge ett program, og de kan melde seg på et eller flere emner. Vi må kunne registrere både nye studenter og nye emner uten at studenten må nødvendigvis bli meldt på et emne. 
 - Hvordan skal vi "komme i gang" med datamodellering? La oss si vi ønsker å finne eniteter for en datamodell, som kan tilfredstille kravene fra utdanningsinstitusjonen. 
 - Ofte er krav presentert som en kravliste eller som en mindre strukturert tekst. Kandidater til entiter kan være substantiver i denne teksten. 
 - For eksempel, her er substantiver markert i vår krav-tekst:
@@ -143,7 +143,7 @@ erDiagram
     	timestamp opprettet
     }
 ```
-- Nå, som vi har funnet noen entiteter, må vi se på hva står i kravspesifikasjonen / teksten om forhold mellom disse enitetene. For eksempel, står det: "En **student** kan bli tatt opp på ett **program**". Vi kan med sikkerhet anta at det er flere studenter som kan bli tatt opp på ett program. Derfor kan vi modellere denne teksten med en "en-til-mange" relasjon hvor "en student kan delta i ett program og ett program kan ha mange studenter". Vi kan også anta at når vi registrerer en ny student, vet vi allerede hvilket program studenten skal delta i. Derfor kan vi modellere med en fremmenøkkel fra `studenter` til `programmer` og den såkalte kardinaliteten blir at en student må ha nøyaktig ett program, dvs. både minimums- og maksimumskardinalitet er 1. Når det gjelder kardinalitet på `studenter`-siden, så må et program være registrert før man setter inn data om nye studenter, så minimumskardinalitet er 0 og maksimumskardinalitet er *mange*. Kardinalitet 1 betegnes med '|', kardinalitet 0 betegnes med 'o' og kardinalitet *mange* betenges med enten '{' eller '}' avhengig av hvilken retning vi ønsker å spesifisere den. I dette eksemplet skal følgende skrives inn i `mermaid`-koden: `studenter }o..|| programmer: er med i`. Vi kan legge alle forhold til på slutten av koden. 
+- Nå, som vi har funnet noen entiteter, må vi se på hva står i kravspesifikasjonen / teksten om forhold mellom disse enitetene. For eksempel, står det: "En **student** kan bli tatt opp på ett **program**". Vi kan med sikkerhet anta at det er flere studenter som kan bli tatt opp på ett program. Derfor kan vi modellere denne teksten med en "en-til-mange" relasjon hvor "en student kan delta i ett program og ett program kan ha mange studenter". Vi kan også anta at når vi registrerer en ny student, vet vi allerede hvilket program studenten skal delta i. Derfor kan vi modellere med en fremmenøkkel fra `studenter` til `programmer` og den såkalte kardinaliteten blir at en student må ha nøyaktig ett program, dvs. både minimums- og maksimumskardinalitet er 1. Når det gjelder kardinalitet på `studenter`-siden, så må et program være registrert før man setter inn data om nye studenter, så minimumskardinalitet er 0 og maksimumskardinalitet er *mange*. Kardinalitet 1 betegnes med '|', kardinalitet 0 betegnes med 'o' og kardinalitet *mange* betenges med enten '{' eller '}' avhengig av hvilken retning vi ønsker å spesifisere den. I dette eksemplet skal følgende skrives inn i `mermaid`-koden: `studenter }o..|| programmer: "er med i"`. Vi kan legge alle forhold til på slutten av koden. 
 ```
 erDiagram
     studenter {
@@ -186,10 +186,60 @@ erDiagram
     	text beskrivelse
     	timestamp opprettet
     }
-    studenter }o..|| programmer: er med i
+    studenter }o..|| programmer: "er med i"
 ```
 - Legg merke til at forholdet er markert med en stiplet linje. Det markere at forholdet er **ikke-identifiserende**. Foreløpig kan vi huske på at det er på grunn av at begge entitetene vil får sin egen identfikator, dvs. den enes identifikator inneholder ikke den andre identfikator. 
-
+- Det er ikke flere eksplisitt spesifiserte forhold i kravspesifikasjonen mellom `studenter`, `emner` og `programmer`.
+- Hvilke forhold kunne du tenke deg at kunne vært relevante? 
+- Man kunne tenke seg en mulighet hvor studenter kan være med på flere studier og et emner hører til studier (på Oslomet så kan emner inngå i flere studier, så det hadde da vært en mange-til-mange relasjon, dvs. `}..{`, som da krever en koblingsentitet/assosiativ entitet, - om det senere).
+- Vi ser at studenter skal kunne melde seg på emner, og vi kan ressonere oss frem til at en student bør ha mulighet til å melde seg på flere emner og et emne kan ha flere studenter påmeldt. Så da har vi en mange-til-mange relasjon. 
+```
+erDiagram
+    studenter {
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    }
+    programmer {
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    studenter }o..|| programmer: "er med i"
+    studenter }o..o{ emner: "mange-til-mange"
+```
+```mermaid
+erDiagram
+    studenter {
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    }
+    programmer {
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    studenter }o..|| programmer: "er med i"
+    studenter }o..o{ emner: "mange-til-mange"
+```
+- Slik som modellert nå, så kan både `emner` og `studenter` eksistere for seg selv, men vi har sett fra kravspesifikasjonen at vi må introdusere et sterkere forhold mellom disse to entitetene.
 
 
 # Data Definition Language script for datamodellen emneregistreringer
