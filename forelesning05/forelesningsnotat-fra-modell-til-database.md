@@ -28,7 +28,8 @@
     - å navngi entitetene med flertalls-former (dvs. `studenter` og ikke `student`)
     - å bruke såkalt `snake-case` for å navngi, dvs. hvis et navn for en entitet eller et attributt er satt sammen av flere ord, så brukes det `_` (i Unicode U+005F LOW LINE) mellom disse ordene, for eksempel `emne_navn`, `emne_kode`, `program_navn` osv. 
     - å bruke spesifikk notasjon for såkalte *constraints*, nøkler og indekser når den tid kommer (spesifiserer mer detaljert senere)
-    - vi bruker applikasjon `mermaid` for å skrive kode til diagrammene i Markup og vise dem i Github eller eventuelt å ta en skjermbilde av diagrammet i [mermaid.live](https://mermaid.life/) applikasjonen (det finnes også skriverbordsapplikasjoner som kan vise Markdown i form av WYSIWYG).
+    - vi bruker applikasjon `mermaid` for å skrive kode til diagrammene i Markup og vise dem i Github eller eventuelt å ta en skjermbilde av diagrammet i [mermaid.live](https://mermaid.live/) applikasjonen (det finnes også skriverbordsapplikasjoner som kan vise Markdown i form av WYSIWYG).
+    - I entitetsboksene til `mermaid` noterer vi først datatypen til attributten, så navnet til attributten og så informasjon om nøkler og eventuelt noen kommentarer eller `constraints` til slutt.
 - Vi fortsetter med oppgaven og velger kandidat-substantiver for entiteter i datamodellen for emneregistrering.
 - Vi har nå en type fasit tilgjengelig (i Oppgavesett 1.3), som på ingen måte er optimal, så la oss prøve med **studenter**, **programmer** og **emner**, som entiteter. 
 - Her er et eksempel på hvordan man kan "lage" entiteter i `mermaid` og hvordan det blir tolket av Github. Entitetene i ER-diagrammet vises som firkantede bokser.
@@ -55,9 +56,9 @@ erDiagram
 ```
 erDiagram
     studenter {
-    	fornavn varchar(50) 
-    	etternavn varchar(50)
-    	epost varchar(100)
+    	varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
     }
     programmer {}
     emner {}
@@ -65,9 +66,9 @@ erDiagram
 ```mermaid
 erDiagram
     studenter {
-    	fornavn varchar(50) 
-    	etternavn varchar(50)
-    	epost varchar(100)
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
     }
     programmer {}
     emner {}
@@ -76,10 +77,10 @@ erDiagram
 ```
 erDiagram
     studenter {
-    	fornavn varchar(50) 
-    	etternavn varchar(50)
-    	epost varchar(100)
-    	opprettet timestamp
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
     }
     programmer {}
     emner {}
@@ -87,16 +88,137 @@ erDiagram
 ```mermaid
 erDiagram
     studenter {
-    	fornavn varchar(50) 
-    	etternavn varchar(50)
-    	epost varchar(100)
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
     }
     programmer {}
     emner {}
 ```
 - Oppgaven nå er å ressonere seg frem til hvorfor `emner` og `programmer` skal være entiteter, hvilke attributter de skal ha og hvilken datatype disse attributten bør ha i databasen (merk at datatype har direkte innvirkning på hvor stor plass verdien for attributten skal oppta i et lagringsmedium).
 - Vi gjør en quiz nå om valg av entiteter, attributter og datatyper
-- 
+- I kravspesifikasjonen er det lite informasjon om hva ønsker man å lagre om emner og programmer. I en reell situasjon hadde vi gått tilbake til kunden og spurt om flere detaljer. 
+- Anta at vi har spurt kunden og den har sagt at den ønsker å lagre `program_navn`, og `beskrivelse` om programmer, og `emne_kode`, `emne_navn`, `studiepoeng`, ``og `beskrivelse` om emner. 
+- Da kan vi utvide vårt diagram med følgende (vi legger også på en `opprettet` kolonne med timestamp-type, som blir gjort i reelle applikasjoner for å kunne monitorere innsettinger i databasen):
+```
+erDiagram
+    studenter {
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    }
+    programmer {
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+```
+```mermaid
+erDiagram
+    studenter {
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    }
+    programmer {
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+```
+- Nå, som vi har funnet noen entiteter, må vi se på hva står i kravspesifikasjonen / teksten om forhold mellom disse enitetene. For eksempel, står det: "En **student** kan bli tatt opp på ett **program**". Vi kan med sikkerhet anta at det er flere studenter som kan bli tatt opp på ett program. Derfor kan vi modellere denne teksten med en "en-til-mange" relasjon hvor "en student kan delta i ett program og ett program kan ha mange studenter". Vi kan også anta at når vi registrerer en ny student, vet vi allerede hvilket program studenten skal delta i. Derfor kan vi modellere med en fremmenøkkel fra `studenter` til `programmer` og den såkalte kardinaliteten blir at en student må ha nøyaktig ett program, dvs. både minimums- og maksimumskardinalitet er 1. Når det gjelder kardinalitet på `studenter`-siden, så må et program være registrert før man setter inn data om nye studenter, så minimumskardinalitet er 0 og maksimumskardinalitet er *mange*. Kardinalitet 1 betegnes med '|', kardinalitet 0 betegnes med 'o' og kardinalitet *mange* betenges med enten '{' eller '}' avhengig av hvilken retning vi ønsker å spesifisere den. I dette eksemplet skal følgende skrives inn i `mermaid`-koden: `studenter }o..|| programmer: er med i`. Vi kan legge alle forhold til på slutten av koden. 
+```
+erDiagram
+    studenter {
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    }
+    programmer {
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    studenter }o..|| programmer: er med i
+```
+```mermaid
+erDiagram
+    studenter {
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    }
+    programmer {
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    studenter }o..|| programmer: er med i
+```
+- Legg merke til at forholdet er markert med en stiplet linje. Det markere at forholdet er **ikke-identifiserende**. Foreløpig kan vi huske på at det er på grunn av at begge entitetene vil får sin egen identfikator, dvs. den enes identifikator inneholder ikke den andre identfikator. 
+
+
+
+# Data Definition Language script for datamodellen emneregistreringer
+```sql
+CREATE TABLE IF NOT EXISTS emneregistreringer (
+    registrering_id SERIAL PRIMARY KEY,
+    student_id INT NOT NULL REFERENCES studenter(student_id),
+    emne_id INT NOT NULL REFERENCES emner(emne_id),
+    semester VARCHAR(10) NOT NULL,
+    karakter VARCHAR(2),
+    registrert_dato TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(student_id, emne_id, semester)
+);
+
+CREATE TABLE IF NOT EXISTS programmer (
+    program_id SERIAL PRIMARY KEY,
+    program_navn VARCHAR(100) NOT NULL UNIQUE,
+    beskrivelse TEXT,
+    opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS emner (
+    emne_id SERIAL PRIMARY KEY,
+    emne_kode VARCHAR(20) NOT NULL UNIQUE,
+    emne_navn VARCHAR(100) NOT NULL,
+    studiepoeng INT NOT NULL CHECK (studiepoeng > 0),
+    beskrivelse TEXT,
+    opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
 CREATE TABLE IF NOT EXISTS studenter (
@@ -107,20 +229,11 @@ CREATE TABLE IF NOT EXISTS studenter (
     program_id INT REFERENCES programmer(program_id),
     opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+```
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+# Muligens kan ta med mot slutten
 - En mulig måte å se på det generelt er *3-skjema arkitektur*
 	- For å lagre databasebeskrivelse (skjema, *en. schema*) brukes det en `katalog` i DBHS.
 	```sql
