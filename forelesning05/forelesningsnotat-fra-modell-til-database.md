@@ -17,7 +17,7 @@
 - For eksempel, her er substantiver markert i vår krav-tekst:
     - Vi tar opp **studenter** fortløpende på våre **programmer**. En **student** kan bli tatt opp på ett **program**. Vi trenger å registrere nye **studenter** og få **oversikt** over **studenter** som allerede er registrert hos oss. Vi trenger ofte å søke etter **studentnavn** (**fornavn** og **etternavn**) når vi har studentens **e-postadresse**.
     - **Studentene** må følge ett **program**, og de kan melde seg på et eller flere **emner**. Vi må kunne registrere både nye **studenter** og nye **emner** uten at **studenten** må nødvendigvis blir meldt på et **emne**.
-- Substantivene som er brukt her er: **studenter**, **programmer**, **emner**, **studentnavn**, **fornavn**, **etternavn**, **oversikt**. Alle disse substantivene er kandidater til enten å være entiteter eller attributter til entiteter. Basert på denne listen kan vi ta mange valg. Ofte må man prøve forskjellige varianter og se hvordan modellene funksjonerer med data. Det er også vanlig at kravspesifikasjon inneholder nøyaktig informasjon om hva som skal lagres og eventuelt over hvor lang tid.
+- Substantivene som er brukt her er: **studenter**, **programmer**, **emner**, **studentnavn**, **fornavn**, **etternavn**, **oversikt** og **e-postadresse**. Alle disse substantivene er kandidater til enten å være entiteter eller attributter til entiteter. Basert på denne listen kan vi ta mange valg. Ofte må man prøve forskjellige varianter og se hvordan modellene funksjonerer med data. Det er også vanlig at kravspesifikasjon inneholder nøyaktig informasjon om hva som skal lagres og eventuelt over hvor lang tid.
 - Det er vanlig å presentere databasemodeller med diagrammer.
 - Diagrammene som illustrerer/beskriver en relasjonsmodell blir kalt for *Entity Relationship diagrammer*.
 - Det er flere notasjoner for ER-diagrammer, som er i bruk i praksis (i reelle prosjekter) og i litteraturen. 
@@ -47,23 +47,56 @@ erDiagram
 - Hva med de andre substantivene? **studentnavn** er en god kandidat til å være en attributt for entiteten **studenter** (hva hvis den blir valgt som entitet?); vi kan velge den, hvis vi ikke ønsker å dele opp i fornavn og etternavn, for eksempel.
 - Siden vi har både **fornavn** og **etternavn** nevnt i spesifikasjonen, så er det naturlig å tenke at disse kan være attributter for **studenter**.
 - **oversikt** kan være en visning for sluttbruker, så den er kanskje ikke den beste kandidaten for hoved-entitetene i modellen. 
+- **e-postadresse** er definitivt en god attributt for en student, spesielt når det er nevnt i kravspesifikasjonen at brukere/kunder ønsker å gjøre søk basert på den.
 - Dere merker sikkert at formuleringene for valg vi gjør er vage. I praksis vil du ofte se på eksisterende datamodeller og gjenbruke kunnskapen fra disse, men du må utvikle en fleksibel tankegang, da det ikke er uvanlig å komme opp i situasjoner hvor brukerkrav kan kreve en spesiell datamodell. Husk også at en (konseptuell) datamodell er begrenset av de mulighetene som du har i forhold til DBHS og maskinvaren, som vi har tatt opp tidligere i dette emne.
-- La oss velge **fornavn** og **etternavn** som attributter for en instans fra `studenter`, som da er en spesifikk `student`.
-- I `mermaid` kan du enkelt sette på attributter. 
+- La oss velge **fornavn**, **etternavn** og **e-postadresse** som attributter for en instans fra `studenter`, som da er en spesifikk `student`.
+- I `mermaid` kan du enkelt legge til attributter med den datatypen (i literaturen kalt `domen`) som du mener er hensiktsmessig i forhold til kravspesifikasjonen, men også til operasjoner, som du eventuelt ser, den kan bli brukt med. Det finnes også datatyper i DBHS, som dekker meget vanlige behov for databasedesignere og databasebrukere, som flere typer for datoer (timestamp, date) og typer for forskjellige talltyper (heltall, flytetall) osv.
+- Her tenker vi at det finnes ikke (eller meget sjeldent) lengre fornavn eller etternavn enn 50 tegn. Vi tenker også at en e-postadresse kan bli lenger enn 50 tegn. Internet Engineering Task Force (IETF) definerer 254 som en maksimal lengde for en gyldig e-postadresse, og som de fleste e-post applikasjoner skal respektere). Så vårt valg at 100 tegn kan være for lite, men hvis vi øker den til 254, bruker vi veldig mye ekstraplass, siden sannsynlighet at vi får en e-postadresse over 100 tegn er meget liten.
+```
+erDiagram
+    studenter {
+    	fornavn varchar(50) 
+    	etternavn varchar(50)
+    	epost varchar(100)
+    }
+    programmer {}
+    emner {}
+```
 ```mermaid
 erDiagram
-    studenter {fornavn varchar(50) }
+    studenter {
+    	fornavn varchar(50) 
+    	etternavn varchar(50)
+    	epost varchar(100)
+    }
     programmer {}
     emner {}
 ```
+- Det er vanlig å legge til en del ekstra-attributter (felt), som ikke er spesifisert i kravspesifikasjonene. Det kan være attributter for tidspunkt når den konkrete raden ble endret og også av hvem. Ofte brukes slike ekstra-attributter for å monitorere bruken av databasen. Som et eksempel, foreslår vi å legge til et attributt for når raden ble **opprettet** med datatypen `timestamp`. Hvis vi skulle endre raden, for eksempel, hvis en student har fått en ny e-postadresse, så kan vi endre kun e-post attributten og ikke endre **opprettet** tidspunktet.
 ```
 erDiagram
-    studenter {fornavn varchar(50) }
+    studenter {
+    	fornavn varchar(50) 
+    	etternavn varchar(50)
+    	epost varchar(100)
+    	opprettet timestamp
+    }
     programmer {}
     emner {}
 ```
-
-
+```mermaid
+erDiagram
+    studenter {
+    	fornavn varchar(50) 
+    	etternavn varchar(50)
+    	epost varchar(100)
+    }
+    programmer {}
+    emner {}
+```
+- Oppgaven nå er å ressonere seg frem til hvorfor `emner` og `programmer` skal være entiteter, hvilke attributter de skal ha og hvilken datatype disse attributten bør ha i databasen (merk at datatype har direkte innvirkning på hvor stor plass verdien for attributten skal oppta i et lagringsmedium).
+- Vi gjør en quiz nå om valg av entiteter, attributter og datatyper
+- 
 
 
 CREATE TABLE IF NOT EXISTS studenter (
