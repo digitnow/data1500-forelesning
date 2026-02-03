@@ -26,7 +26,7 @@
 - Vi velger 
     - å bruke kråkefot-notasjon (som i pensumboken)
     - å navngi entitetene med flertalls-former (dvs. `studenter` og ikke `student`)
-    - å bruke såkalt `snake-case` for å navngi, dvs. hvis et navn for en entitet eller et attributt er satt sammen av flere ord, så brukes det `_` (i Unicode U+005F LOW LINE) mellom disse ordene, for eksempel `emne_navn`, `emne_kode`, `program_navn` osv. 
+    - å bruke såkalt `snake-case` for å navngi, dvs. hvis et navn for en entitet eller et attributt er satt sammen av flere ord, så brukes det `_` (i Unicode U+005F LOW LINE) mellom disse ordene, for eksempel `emne_navn`, `emne_kode`, `program_navn` osv. OBS! Vi skal ikke bruke `snake-case` på tabellnavn (vær kreativ).
     - å bruke spesifikk notasjon for såkalte *constraints*, nøkler og indekser når den tid kommer (spesifiserer mer detaljert senere)
     - vi bruker applikasjon `mermaid` for å skrive kode til diagrammene i Markup og vise dem i Github eller eventuelt å ta en skjermbilde av diagrammet i [mermaid.live](https://mermaid.live/) applikasjonen (det finnes også skriverbordsapplikasjoner som kan vise Markdown i form av WYSIWYG).
     - I entitetsboksene til `mermaid` noterer vi først datatypen til attributten, så navnet til attributten og så informasjon om nøkler og eventuelt noen kommentarer eller `constraints` til slutt.
@@ -143,7 +143,7 @@ erDiagram
     	timestamp opprettet
     }
 ```
-- Nå, som vi har funnet noen entiteter, må vi se på hva står i kravspesifikasjonen / teksten om forhold mellom disse enitetene. For eksempel, står det: "En **student** kan bli tatt opp på ett **program**". Vi kan med sikkerhet anta at det er flere studenter som kan bli tatt opp på ett program. Derfor kan vi modellere denne teksten med en "en-til-mange" relasjon hvor "en student kan delta i ett program og ett program kan ha mange studenter". Vi kan også anta at når vi registrerer en ny student, vet vi allerede hvilket program studenten skal delta i. Derfor kan vi modellere med en fremmenøkkel fra `studenter` til `programmer` og den såkalte kardinaliteten blir at en student må ha nøyaktig ett program, dvs. både minimums- og maksimumskardinalitet er 1. Når det gjelder kardinalitet på `studenter`-siden, så må et program være registrert før man setter inn data om nye studenter, så minimumskardinalitet er 0 og maksimumskardinalitet er *mange*. Kardinalitet 1 betegnes med '|', kardinalitet 0 betegnes med 'o' og kardinalitet *mange* betenges med enten '{' eller '}' avhengig av hvilken retning vi ønsker å spesifisere den. I dette eksemplet skal følgende skrives inn i `mermaid`-koden: `studenter }o..|| programmer: "er med i"`. Vi kan legge alle forhold til på slutten av koden. 
+- Nå, som vi har funnet noen entiteter, må vi se på hva står i kravspesifikasjonen / teksten om forhold mellom disse enitetene. For eksempel, står det: "En **student** kan bli tatt opp på ett **program**". Vi kan med sikkerhet anta at det er flere studenter som kan bli tatt opp på ett program. Derfor kan vi modellere denne teksten med en "en-til-mange" relasjon hvor "en student kan delta i ett program og ett program kan ha mange studenter". Vi kan også anta at når vi registrerer en ny student, vet vi allerede hvilket program studenten skal delta i. Derfor kan vi modellere med en fremmenøkkel fra `studenter` til `programmer` og den såkalte kardinaliteten blir at en student må ha nøyaktig ett program, dvs. både minimums- og maksimumskardinalitet er 1. Når det gjelder kardinalitet på `studenter`-siden, så må et program være registrert før man setter inn data om nye studenter, så minimumskardinalitet er 0 og maksimumskardinalitet er *mange*. Kardinalitet 1 betegnes med '|', kardinalitet 0 betegnes med 'o' og kardinalitet *mange* betenges med enten '{' eller '}' avhengig av hvilken retning vi ønsker å spesifisere den. I dette eksemplet skal følgende skrives inn i `mermaid`-koden: `studenter }o..|| programmer: "er med i"`. Vi kan legge alle forhold til på slutten av koden. Vi velger også en egen primærnøkkel (PK) for `programmer` og legger inn en fremmednøkkel (FK) mot entiteten `programmer` i entiteten `studenter`. Hvilke andre valg kunne man gjort for primærnøkkel for entiteten `programmer`?
 ```
 erDiagram
     studenter {
@@ -151,8 +151,10 @@ erDiagram
         varchar(50) etternavn
     	varchar(100) epost
     	timestamp opprettet
+    	int program_id FK
     }
     programmer {
+    	int program_id PK
     	varchar(100) program_navn
     	text beskrivelse
     	timestamp opprettet
@@ -173,8 +175,10 @@ erDiagram
         varchar(50) etternavn
     	varchar(100) epost
     	timestamp opprettet
+    	int program_id FK
     }
     programmer {
+    	int program_id PK
     	varchar(100) program_navn
     	text beskrivelse
     	timestamp opprettet
@@ -200,8 +204,10 @@ erDiagram
         varchar(50) etternavn
     	varchar(100) epost
     	timestamp opprettet
+    	int program_id FK
     }
     programmer {
+    	int program_id PK
     	varchar(100) program_navn
     	text beskrivelse
     	timestamp opprettet
@@ -223,8 +229,10 @@ erDiagram
         varchar(50) etternavn
     	varchar(100) epost
     	timestamp opprettet
+    	int program_id FK
     }
     programmer {
+    	int program_id PK
     	varchar(100) program_navn
     	text beskrivelse
     	timestamp opprettet
@@ -239,7 +247,81 @@ erDiagram
     studenter }o..|| programmer: "er med i"
     studenter }o..o{ emner: "mange-til-mange"
 ```
-- Slik som modellert nå, så kan både `emner` og `studenter` eksistere for seg selv, men vi har sett fra kravspesifikasjonen at vi må introdusere et sterkere forhold mellom disse to entitetene.
+- Slik som modellert nå, så kan både `emner` og `studenter` eksistere for seg selv, men vi har sett fra kravspesifikasjonen at vi må introdusere et sterkere forhold mellom disse to entitetene. Vi må se på funksjonelle avhengigheter i de to tabellene (husk fra forrige gang) og bestemme for hvilke unik identifikator (primærnøkke PK) vi skal velge. Forslaget mitt er å velge hybride nøkler, som emne_id og student_id (kan bruke datatype `serial` i PostgreSQL, som implisitt lager en `sekvens`).
+- Vi må gjøre det som forfatteren i pensumboken kaller for **entitisering**, dvs. innføre en nye tabell `emneregistreringer`, som da vil ha to fremmednøkler til både `studenter` og `emner`. 
+- Etter andre runden med vår kunde kommer det frem at vi også må lagre data om **semester** og **karakter**. Da ender vi opp med en ny tabell og to nye forhold mellom `studenter` og `emner`. Foreløpig foreslår jeg også en hybridnøkkel for emneregistreringer og legger inn to fremmednøkler i den nye tabellen
+```
+erDiagram
+    studenter {
+    	int student_id PK
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    	int program_id FK
+    }
+    programmer {
+    	int program_id PK
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	int emne_id PK
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emneregistreringer {
+    	int registrering_id PK
+    	varchar(10) semester
+    	varchar(2) karakter
+    	int student_id FK
+    	int emne_id FK
+    }
+    studenter }o..|| programmer: "er med i"
+    studenter ||..o{ emneregistreringer: "har"
+    emner ||..o{ emneregistreringer: "er i"
+```
+```mermaid
+erDiagram
+    studenter {
+    	int student_id PK
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    	int program_id FK
+    }
+    programmer {
+    	int program_id PK
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	int emne_id PK
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emneregistreringer {
+    	int registrering_id PK
+    	varchar(10) semester
+    	varchar(2) karakter
+    	int student_id FK
+    	int emne_id FK
+    }
+    studenter }o..|| programmer: "er med i"
+    studenter ||..o{ emneregistreringer: "har"
+    emner ||..o{ emneregistreringer: "er i"
+```
+-`student_id ` i emneregistreringer refererer til `studenter` og `emne_id` refererer til `emner`,. Begge er fremmednøkler som peker til andre tabeller, men en registrering kan endres uten å endre studentens eller emnets verdier, dvs. den har andre attributter, så forholdene blir ikke identifiserende.
+
 
 
 # Data Definition Language script for datamodellen emneregistreringer
@@ -283,7 +365,7 @@ CREATE TABLE IF NOT EXISTS studenter (
 
 
 
-# Muligens kan ta med mot slutten
+# Vedlegg: ANSI/SPARC standard for databasearkitektur
 - En mulig måte å se på det generelt er *3-skjema arkitektur*
 	- For å lagre databasebeskrivelse (skjema, *en. schema*) brukes det en `katalog` i DBHS.
 	```sql
@@ -304,4 +386,16 @@ CREATE TABLE IF NOT EXISTS studenter (
     - Det **konseptuelle nivået** (eller det konseptuelle skjema) for å beskrive strukturen til hele database for en gruppe brukere; dette skjemaet skjuler detaljene av de fysiske datastrukturene og beskriver entiteter, datatyper, forhold, brukeroperasjoner og betingelser/begrensninger. Implementasjonens konseptuelt skjema er basert på et konseptuelt skjemadesign i en høyt-nivå (abstraksjon) data modell.
     - Det **eksterne eller visnings nivå** kan presenteres ved en rekke eksterne skjemaer og brukervisninger. Hvert av de eksterne skjemaene beskriver et utsnitt av data fra databasen, som en brukergruppe er interessert i.
 - I de fleste DBHS, som støtter brukervisninger (*en. views*), de eksterne skjemaene blir spesifisert i den samme datamodellen, som inneholder informasjon av det konseptuelle nivået.
+
+# Vedlegg: Nøkkelvandring eller hybride nøkler?
+
+| Aspekt                    | Nøkkelvandring              | Hybride Nøkler  |
+| ------------------------- | --------------------------- | --------------- |
+| **Strukturell Sikkerhet** | ✅ Høy                       | ❌ Lav           |
+| **Fleksibilitet**         | ❌ Lav                       | ✅ Høy           |
+| **Enklere Querying**      | ❌ Kompleks (flere FK)       | ✅ Enkel         |
+| **Redundans**             | ❌ Høy (flere FK per tabell) | ✅ Lav           |
+| **Semantisk Klarhet**     | ✅ Klar                      | ❌ Uklar         |
+| **Validering**            | ✅ Automatisk (DB)           | ❌ Manuell (app) |
+| **Fremtidssikkerhet**     | ❌ Vanskelig å utvide        | ✅ Lett å utvide |
 
