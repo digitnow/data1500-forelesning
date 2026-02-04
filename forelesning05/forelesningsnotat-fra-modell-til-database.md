@@ -1,4 +1,4 @@
-# Forelesningsmanus 2026-02-24: Fra modell til database
+# Forelesningsmanus 2026-02-04: Fra modell til database
 - Vi har sett hvordan vi kan bruke filer på en datamaskin og ved hjelp av et programmeringsmiljø, som består av et programmeringsspråk og en kompilator, lagre data i filer og hente data fra filer.
 - Vi har også sett at vi kan bruke flere programmeringsmiljøer for å lage visninger (i nettleser, for eksempel) av data fra filene og skjemaer for å legge inn data i filene.
 - Dette kalte vi for et tre-lags arkitektur, med visning på "toppen", mellomlaget med funksjoner fra programmeringsmiljøet og filer som den fysiske måten å lagre data på disk over lengre tid, dvs. permanent.
@@ -249,7 +249,7 @@ erDiagram
 ```
 - Slik som modellert nå, så kan både `emner` og `studenter` eksistere for seg selv, men vi har sett fra kravspesifikasjonen at vi må introdusere et sterkere forhold mellom disse to entitetene. Vi må se på funksjonelle avhengigheter i de to tabellene (husk fra forrige gang) og bestemme for hvilke unik identifikator (primærnøkke PK) vi skal velge. Forslaget mitt er å velge hybride nøkler, som emne_id og student_id (kan bruke datatype `serial` i PostgreSQL, som implisitt lager en `sekvens`).
 - Vi må gjøre det som forfatteren i pensumboken kaller for **entitisering**, dvs. innføre en nye tabell `emneregistreringer`, som da vil ha to fremmednøkler til både `studenter` og `emner`. 
-- Etter andre runden med vår kunde kommer det frem at vi også må lagre data om **semester** og **karakter**. Da ender vi opp med en ny tabell og to nye forhold mellom `studenter` og `emner`. Foreløpig foreslår jeg også en hybridnøkkel for emneregistreringer og legger inn to fremmednøkler i den nye tabellen
+- Etter andre runden med vår kunde kommer det frem at vi også må lagre data om **semester** og **karakter**. Da ender vi opp med en ny tabell og to nye forhold mellom `studenter` og `emner`. Foreløpig foreslår jeg også en hybridnøkkel for emneregistreringer og legger inn to fremmednøkler i den nye tabellen. Vi legger også til en `registrert_dato` av datatypen `timestamp`.
 ```
 erDiagram
     studenter {
@@ -278,6 +278,7 @@ erDiagram
     	int registrering_id PK
     	varchar(10) semester
     	varchar(2) karakter
+    	timestamp registrert_dato
     	int student_id FK
     	int emne_id FK
     }
@@ -313,6 +314,7 @@ erDiagram
     	int registrering_id PK
     	varchar(10) semester
     	varchar(2) karakter
+    	timestamp registrert_dato
     	int student_id FK
     	int emne_id FK
     }
@@ -321,19 +323,92 @@ erDiagram
     emner ||..o{ emneregistreringer: "er i"
 ```
 -`student_id ` i emneregistreringer refererer til `studenter` og `emne_id` refererer til `emner`,. Begge er fremmednøkler som peker til andre tabeller, men en registrering kan endres uten å endre studentens eller emnets verdier, dvs. den har andre attributter, så forholdene blir ikke identifiserende.
+- I tillegg har vi funnet ut at en student kan registrere seg på samme emne i forskjellige semsestre. For å modellere det kan vi definere en `constraint`, som sier at en kombinasjon mellom `semester_id`, `emne_id` og `semester` må være unik. Markerer med UK (`unique key`)
+```
+erDiagram
+    studenter {
+    	int student_id PK
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    	int program_id FK
+    }
+    programmer {
+    	int program_id PK
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	int emne_id PK
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emneregistreringer {
+    	int registrering_id PK
+    	varchar(10) semester UK
+    	varchar(2) karakter
+    	timestamp registrert_dato
+    	int student_id FK, UK
+    	int emne_id FK, UK
+    }
+    studenter }o..|| programmer: "er med i"
+    studenter ||..o{ emneregistreringer: "har"
+    emner ||..o{ emneregistreringer: "er i"
+```
+```mermaid
+erDiagram
+    studenter {
+    	int student_id PK
+   		varchar(50) fornavn
+        varchar(50) etternavn
+    	varchar(100) epost
+    	timestamp opprettet
+    	int program_id FK
+    }
+    programmer {
+    	int program_id PK
+    	varchar(100) program_navn
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emner {
+    	int emne_id PK
+    	varchar(20) emne_kode
+    	varchar(100) emne_navn
+    	int studiepoeng
+    	text beskrivelse
+    	timestamp opprettet
+    }
+    emneregistreringer {
+    	int registrering_id PK
+    	varchar(10) semester UK
+    	varchar(2) karakter
+    	timestamp registrert_dato
+    	int student_id FK, UK
+    	int emne_id FK, UK
+    }
+    studenter }o..|| programmer: "er med i"
+    studenter ||..o{ emneregistreringer: "har"
+    emner ||..o{ emneregistreringer: "er i"
+```
 
+Da er vi klare til å bruke DDL (Data Definition Language) for å definere scriptet, som vi kan bruke, for å lagre data (datatyper, størrelser, forhold og betingelser) om de dataene vi ønsker å lagre, i databasen. Et eksempel på en betingelse er `tudiepoeng INT NOT NULL CHECK (studiepoeng > 0)` som gjør at applikasjon eller brukeren vil få en feilmelding hvis noen emneregistreringer foretas med 0 studiepoeng. 
 
 
 # Data Definition Language script for datamodellen emneregistreringer
 ```sql
-CREATE TABLE IF NOT EXISTS emneregistreringer (
-    registrering_id SERIAL PRIMARY KEY,
-    student_id INT NOT NULL REFERENCES studenter(student_id),
-    emne_id INT NOT NULL REFERENCES emner(emne_id),
-    semester VARCHAR(10) NOT NULL,
-    karakter VARCHAR(2),
-    registrert_dato TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(student_id, emne_id, semester)
+CREATE TABLE IF NOT EXISTS studenter (
+    student_id SERIAL PRIMARY KEY,
+    fornavn VARCHAR(50) NOT NULL,
+    etternavn VARCHAR(50) NOT NULL,
+    epost VARCHAR(100) NOT NULL UNIQUE,
+    program_id INT REFERENCES programmer(program_id),
+    opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS programmer (
@@ -352,17 +427,16 @@ CREATE TABLE IF NOT EXISTS emner (
     opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
-CREATE TABLE IF NOT EXISTS studenter (
-    student_id SERIAL PRIMARY KEY,
-    fornavn VARCHAR(50) NOT NULL,
-    etternavn VARCHAR(50) NOT NULL,
-    epost VARCHAR(100) NOT NULL UNIQUE,
-    program_id INT REFERENCES programmer(program_id),
-    opprettet TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS emneregistreringer (
+    registrering_id SERIAL PRIMARY KEY,
+    student_id INT NOT NULL REFERENCES studenter(student_id),
+    emne_id INT NOT NULL REFERENCES emner(emne_id),
+    semester VARCHAR(10) NOT NULL,
+    karakter VARCHAR(2),
+    registrert_dato TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(student_id, emne_id, semester)
 );
 ```
-
 
 
 # Vedlegg: ANSI/SPARC standard for databasearkitektur
