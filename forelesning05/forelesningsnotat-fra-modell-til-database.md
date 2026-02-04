@@ -247,9 +247,9 @@ erDiagram
     studenter }o..|| programmer: "er med i"
     studenter }o..o{ emner: "mange-til-mange"
 ```
-- Slik som modellert nå, så kan både `emner` og `studenter` eksistere for seg selv, men vi har sett fra kravspesifikasjonen at vi må introdusere et sterkere forhold mellom disse to entitetene. Vi må se på funksjonelle avhengigheter i de to tabellene (husk fra forrige gang) og bestemme for hvilke unik identifikator (primærnøkke PK) vi skal velge. Forslaget mitt er å velge hybride nøkler, som emne_id og student_id (kan bruke datatype `serial` i PostgreSQL, som implisitt lager en `sekvens`).
+- Slik som modellert nå, så kan både `emner` og `studenter` eksistere for seg selv, men vi har sett fra kravspesifikasjonen at vi må introdusere et sterkere forhold mellom disse to entitetene. Vi må se på funksjonelle avhengigheter i de to tabellene (husk fra forrige gang) og bestemme for hvilke unik identifikator (primærnøkke PK) vi skal velge. Forslaget mitt er å velge surrogatnøkler, som emne_id og student_id (kan bruke datatype `serial` i PostgreSQL, som implisitt lager en `sekvens`).
 - Vi må gjøre det som forfatteren i pensumboken kaller for **entitisering**, dvs. innføre en nye tabell `emneregistreringer`, som da vil ha to fremmednøkler til både `studenter` og `emner`. 
-- Etter andre runden med vår kunde kommer det frem at vi også må lagre data om **semester** og **karakter**. Da ender vi opp med en ny tabell og to nye forhold mellom `studenter` og `emner`. Foreløpig foreslår jeg også en hybridnøkkel for emneregistreringer og legger inn to fremmednøkler i den nye tabellen. Vi legger også til en `registrert_dato` av datatypen `timestamp`.
+- Etter andre runden med vår kunde kommer det frem at vi også må lagre data om **semester** og **karakter**. Da ender vi opp med en ny tabell og to nye forhold mellom `studenter` og `emner`. Foreløpig foreslår jeg også en surrogatnøkkel for emneregistreringer og legger inn to fremmednøkler i den nye tabellen. Vi legger også til en `registrert_dato` av datatypen `timestamp`.
 ```
 erDiagram
     studenter {
@@ -461,15 +461,15 @@ CREATE TABLE IF NOT EXISTS emneregistreringer (
     - Det **eksterne eller visnings nivå** kan presenteres ved en rekke eksterne skjemaer og brukervisninger. Hvert av de eksterne skjemaene beskriver et utsnitt av data fra databasen, som en brukergruppe er interessert i.
 - I de fleste DBHS, som støtter brukervisninger (*en. views*), de eksterne skjemaene blir spesifisert i den samme datamodellen, som inneholder informasjon av det konseptuelle nivået.
 
-# Vedlegg: Nøkkelvandring eller hybride nøkler?
+# Vedlegg: Nøkkelvandring, surrogatnøkler eller begge deler?
 
-| Aspekt                    | Nøkkelvandring              | Hybride Nøkler  |
-| ------------------------- | --------------------------- | --------------- |
-| **Strukturell Sikkerhet** | ✅ Høy                       | ❌ Lav           |
-| **Fleksibilitet**         | ❌ Lav                       | ✅ Høy           |
-| **Enklere Querying**      | ❌ Kompleks (flere FK)       | ✅ Enkel         |
-| **Redundans**             | ❌ Høy (flere FK per tabell) | ✅ Lav           |
-| **Semantisk Klarhet**     | ✅ Klar                      | ❌ Uklar         |
-| **Validering**            | ✅ Automatisk (DB)           | ❌ Manuell (app) |
-| **Fremtidssikkerhet**     | ❌ Vanskelig å utvide        | ✅ Lett å utvide |
 
+| Aspekt                    | Nøkkelvandring (Sammensatt PK)             | Ren Surrogatnøkkel                     | Hybride Nøkler (Surrogat + Unique)        |
+| :------------------------ | :----------------------------------------- | :------------------------------------- | :---------------------------------------- |
+| **Eksempel**              | `PK(student_id, emne_id)`                  | `PK(reg_id)`                           | `PK(reg_id)` + `UNIQUE(student, emne)`    |
+| **Strukturell Sikkerhet** | ✅ **Høy** (Umulig med duplikater)          | ❌ **Lav** (Tillater duplikater\*)      | ✅ **Høy** (Sikret av UNIQUE constraint)   |
+| **Fleksibilitet**         | ❌ **Lav** (Vanskelig å endre nøkler)       | ✅ **Høy** (Nøkkel er uavhengig)        | ✅ **Høy** (Nøkkel er uavhengig)           |
+| **Enklere Querying**      | ❌ **Middels** (Må bruke to ID-er)          | ✅ **Enkel** (Kan bruke én ID)          | ✅ **Enkel** (Kan bruke én ID)             |
+| **ORM-støtte**            | ⚠️ **Varierende** (Ofte klønete)           | ✅ **God** (Standard)                   | ✅ **God** (Standard)                      |
+| **Lagringsplass**         | ✅ **Minst** (Ingen ekstra kolonne)         | ❌ **Mer** (Ekstra ID-kolonne + indeks) | ❌ **Mest** (Ekstra ID + to indekser)      |
+| **Semantikk**             | ✅ **Tydelig** (Koblingen *er* identiteten) | ❌ **Svak** (ID sier ingenting)         | ✅ **God** (ID for ref, Unique for logikk) |
