@@ -102,15 +102,17 @@ erDiagram
     - for å sette inn en tuppel med data for en ny ansatt vi må inkludere enten attributtverdier for avdeling, som en ansatte jobber i, eller NULL-er (hvis en ansatt jobber ikke for en avdeling ennå)
 
 ## RL2: INS-, DEL-, MOD-anomalier
-- [RETTNINGSLINJE 1 for en "god" modell]
-- (2) Designe skjemaer for basis-relasjoner slik at det finnes ikke INS-, DEL- eller MOD-anomalier i relasjoner. Hvis det noen anomalier, beskriv disse detaljert og sørg for at programmer som skal oppdatere databasen tar hensyn til dem.
+- [RETTNINGSLINJE 2 for en "god" modell]
+- (2) Designe skjemaer for basis-relasjoner slik man unngår INS-, DEL- eller MOD-anomalier i relasjoner. Hvis man kan ikke unngå anomalier, beskriv disse detaljert og sørg for at programmer som skal oppdatere databasen tar hensyn til dem.
 
 
 ## RL3: NULL verdier i tuplene
+- [RETTNINGSLINJE 3 for en "god" modell]
 - Ofte (spesielt for å gjenspeile den reele verden) desinger man skjema slik at man får en "fet" relasjon. Hvis flere av attributtene gjelder ikke alle tupler i relasjonen, blir det en del NULL-er i disse tuplene. Dette kan føre til sløsing med lagringsplass, problemer med forklaring av mening til attributtene og en spesifikasjon av JOIN operasjoner på et logisk nivå (inner og outer joins vil gi forskjellige resultater når NULL-verdier er involvert i joins; man må være oppmerksom på at forskjellige typer joins kan gi forskjellige resultater; dette kan gi mening for avansert brukere og de som har designet modellen, men dette kan gi problemer for andre
 - (3) Unngå, hvis mulig, å plassere verdier i basis-relasjoner, hvis verdier ofte skal være NULL. Hvis det ikke er mulig å unngå NULL-er, sørge for at de fremkommer bare i spesifikke tilfeller og gjelder ikke de fleste tuplene i relasjonen (eksempel fra bysykkeluleie med laas_id og stasjons_id som NULL-verdier hvis sykkelen utleid, er med vilje gitt for å illustrere brudd på rettningslinjen #3).
 
 ## RL4: Feil i tupler under joins
+- [RETTNINGSLINJE 4 for en "god" modell]
 - (4) Designe skjema slik at de kan kobles sammen med likhets-betingelser på attributter som er passende relaterte (PK, FK) par på en slik måte som garanterer at det ikke blir generert "tvilsomme" tupler (i de resulterende relasjoner etter joins). Unngå relasjoner som er matsjet på attributter som ikke er (logiske! reelle fra verden modellert i modellen med PK og FK) kombinasjoner, fordi a joins på slike attributter kan resultere i "tvilsomme" tupler.
 - 
 ```sql
@@ -192,6 +194,7 @@ select * from anspro natural join anslok;
     - ikke D -> C
 
 - Viser B -> C
+
 |A|B|C|D|
 |--|--|--|--|
 |a1|**b1**|**c1**|d1|
