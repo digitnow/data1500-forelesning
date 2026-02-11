@@ -387,9 +387,20 @@ where an.ansatt_nummer = av.avdelingssjefs_ansattnummer;
 - forestillinger(kinosal, dato, klokkeslett, filmnr)
 - FD1: {kinosal, dato, klokkeslett} -> filmnr 
 - FD2: filmnr -> kinosal (en film blir alltid vist i samme kinosal)
+
+- Her er en sammendrag om 3NF og BCNF generert av Manus.im (KI-verktøy):
+
+| Aspekt                  | 3NF                             | BCNF                                         |
+| ----------------------- | ------------------------------- | -------------------------------------------- |
+| **Kompleksitet**        | Enklere å forstå                | Mer kompleks                                 |
+| **Praktiske problemer** | Sjelden                         | Veldig sjelden                               |
+| **Antall tabeller**     | Færre                           | Ofte flere                                   |
+| **Join-ytelse**         | Færre joins nødvendig           | Flere joins nødvendig                        |
+| **Ikke-additive joins** | Sjelden hvis riktig normalisert | Sjelden hvis riktig normalisert              |
+| **Når det lønner seg**  | 99% av tilfellene               | Spesielle tilfeller med flere kandidatnøkler |
  
 
-## Studieeksempel
+# Studieeksempel
 Eksemplet vi har brukt før under forelesninger. 
 Jeg har tatt ut tidsstempel for hver tuppel i tabeller hvor dette ikke er strengt tatt nødvendig.
 
@@ -435,3 +446,86 @@ emner ||..o{ undervisninger: ""
 ansatte ||..o{ undervisninger: ""
 ```
 
+# Eksempel fra Oppgavesett 1.4
+
+```mermaid
+erDiagram
+    BRUKERE ||--|{ LAERERE : "is a"
+    BRUKERE ||--|{ STUDENTER : "is a"
+
+    LAERERE ||--o{ KLASSEROM : "ansvarlig for"
+    LAERERE ||--o{ BESKJEDER : "publiserer"
+
+    STUDENTER ||--o{ BRUKER_GRUPPE : "medlem av"
+
+    GRUPPER ||--o{ BRUKER_GRUPPE : "inneholder"
+    GRUPPER ||--o{ GRUPPE_KLASSEROM : "har adgang til"
+
+    KLASSEROM ||--o{ GRUPPE_KLASSEROM : "tilgjengelig for"
+    KLASSEROM ||--o{ BESKJEDER : "inneholder"
+    KLASSEROM ||--o{ INNLEGG : "inneholder forum"
+
+    BRUKERE ||--o{ INNLEGG : "skriver"
+
+    INNLEGG ||--o{ INNLEGG : "svar på"
+
+    BRUKERE {
+        int bruker_id PK
+        string brukernavn UK
+        string passord_hash
+    }
+
+    LAERERE {
+        int bruker_id PK, FK
+        string ansattnummer UK
+    }
+
+    STUDENTER {
+        int bruker_id PK, FK
+        string student_nummer UK
+    }
+
+    GRUPPER {
+        int gruppe_id PK
+        string gruppe_navn
+    }
+
+    BRUKER_GRUPPE {
+        int student_bruker_id FK "(peker til studenter.bruker_id)"
+        int gruppe_id FK
+    }
+
+    KLASSEROM {
+        int klasserom_id PK
+        string kode UK
+        string navn
+        int laerer_bruker_id FK "(peker til laerere.bruker_id)"
+    }
+
+    GRUPPE_KLASSEROM {
+        int gruppe_id FK
+        int klasserom_id FK
+    }
+
+    BESKJEDER {
+        int beskjed_id PK
+        int klasserom_id FK
+        int avsender_laerer_id FK "(peker til laerere.bruker_id)"
+        string overskrift
+        string innhold
+        timestamp dato
+    }
+
+    INNLEGG {
+        int innlegg_id PK
+        int klasserom_id FK
+        int avsender_bruker_id FK "(peker til brukere.bruker_id)"
+        string overskrift
+        string innhold
+        timestamp dato
+        int svar_paa_innlegg_id FK
+    }
+```
+
+# Referanser
+Elmrasi & Navathe. 2016. "Fundamentals of Database Systems". 7th Edition.
