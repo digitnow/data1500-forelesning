@@ -360,7 +360,7 @@ LEFT JOIN
 
 
 # Hva som skjer i kulissene?
-- Før vi går videre, skal vi se på i hvilken rekkefølge en DBHS prosesserer/tolker en SQL-spørring.
+- Før vi går videre, skal vi se på i hvilken rekkefølge en DBHS prosesserer/tolker en SQL-spørring.f
 - Vi antar at vi har tre tabeller T1, T2 og T3 og hver tabell har 3 kolonner hver (T1.K1, ..., T1.K3), (T2.K1, ..., T2.K3), (T3.K1, ..., T3.K3)
 
 |Reservert ord|Kommentar/Eksempel|Rekkefølge nr.|Relasjonsalgebra|
@@ -370,7 +370,7 @@ LEFT JOIN
 |**WHERE**|=,<>,!=,<,>,<=,>=, LIKE, ILIKE, AND, OR, NOT, EXISTS |3| 𝜎 |
 |**GROUP BY**|husk attributter må være i **SELECT** |4| |
 |**HAVING**|betingelser med aggregeringsfuknsjoner `AVG(T3.K1) > 20000` |5| 𝜎 |
-|**SELECT**| |6| 𝜋 |
+|**SELECT**|T1.K3 as A1, SUM(T2.K2) as SUM1 |6| 𝜋, 𝜌 |
 |**DISTINCT**|brukes i **SELECT** |7| |
 |**ORDER BY**|brukes for sortering ASC (standard) og DESC |8| |
 |**LIMIT / OFFSET**|brukes for å begrense antall rader i resultat-relasjonen |9| |
@@ -383,7 +383,7 @@ LEFT JOIN
     - JOIN ⋈
     - UNION ∪, SNITT ∩ og DIFFERANSE ∖
 
-[Alt text](sql-query-cycle.png "a title")
+![Alt text](sql-query-cycle.png)
 
 # LLM "tekst til SQL"
 - LLM - Large Language Model (store språkmodeller)
@@ -411,7 +411,7 @@ LEFT JOIN
     - Hvordan er NULL behandlet: alltid forsikre deg om at NULL er håndtert i dine spørringer slik som forventet. Bruk IS NULL/IS NOT NULL for sammenligninger. 
     - Hvordan brukes DISTINCT: kan skjule datakvalitet og er ikke alltid nødvendig, spesielt når brukt med agreggering.
     - Typer av JOIN: forstå forskjell på INNER, LEFT, RIGHT, og FULL OUTER JOIN. LEFT JOIN i kombinasjon med WHERE-klausul kan skape problemer, siden det kan produsere samme resultat som INNER JOIN 
-![Alt text](sqljoins.png "a title")
+![Alt text](sqljoins.png)
     - Aggregeringslogikk: alltid forsikre deg at GROUP BY-klausulen inkluderer alle ikke-aggregerte kolonner i SELECT.
     - Delspørringer og Common Table Expressions: for kompleks logikk vurder delspørringer og CTE for å dele opp problemet i mindre, mer håndterbare deler. 
     - Grensetilfeller: sjekk alltid grensetilfeller i datagrunnlaget, som f.eks., brukere med ingen aktivitet eller produkter med ingen rating. Test alltid dine spørringer med forskjellige eksempeldata, for å verifisere at de produserer korrekt resultat (ofte må man legge til mer spesifikke data for å se problemtilfeller).
