@@ -75,6 +75,7 @@
 - En **primærnøkkel** er en unik identifikator til hver rad i en tabell. Det forsikrer at det finnes ikke flere rader med nøyaktig samme verdi og gir mulighet til raske søk og oppdateringer av rader. Primærnøkkel hjelper å holde klar og organisert struktur i database. Det gjør at rader kan identifiseres og hindrer duplikater, som kan føre til ikke konsistente data og forvirring. 
 - En **sekundærnøkkel** er en ikke unik attributt or mengde av attributter i en database som muliggjør en effektiv tilgang til rader basert på andre verdier enn verdier for primærnøkkel. Navn til musikker kunne vært et sekundærnøkkel, mens musikker id er en primærnøkkel. Dette beskriver kun andre attributter enn primærnøkkel og har ikke direkte med indeksering å gjøre. Dette begrepet brukes ikke ofte i databaselitteratur.
 - En **fremmednøkkel** er en kolonne eller en mengde med kolloner i en tabell som peker på en primærnøkkel i en annen tabell. Det brukes for å definere forhold mellom tabeller. Det hjelper til å synkronisere data på tvers av flere tabeller. Ved å referere til primærnøkkel i en annen tabell, sørger fremmednøkkel at data i databasen er konsistent, presis og at man unngår rader uten forhold ("foreldreløse rader").
+- Det brukes forskjellige navn på de reserverte ordene i SQL. SELECT, WHERE, JOIN, ORDER BY, LIMIT kalles ofte for *klausuler*, som enkelt sagt betyr at det er *operatorer* som avgrenser noe fra en større helhet. INSERT, UPDATE og DELETE blir ofte kalt for *kommandoer*. COUNT, AVG, SUM, MIN, MAX blir kalt for *funksjoner*. Det er viktig å utføre SQL-setninger og SQL-spørringer i praksis, for å danne en stabil oppfatning av hva disse ordene faktisk "gjør" i praksis, uavhengig om de kalles for *klausule*, *operator*, *funksjon* eller *kommando*. 
 
 - `users` tabell inneholder informasjon om hver bruker, som navn og epostadresse. `user_id` er en primærnøkkel, en unikt heltall, som vi velger å bruke for å referere til en bruker. Vi bruker VARCHAR for kortere strenger (opp til 256?) og TEXT for lengre strenger.
 - `songs` tabell inneholder informasjon om hver sang, som en identifikater som også er en primærnøkkel, en tittel, en artist (musikker) og en sjanger (som kan betraktes som ikke unike sekundærnøkler). 
@@ -206,6 +207,88 @@ networks:
 (9 rows)
 ```
 - I resultattabellen ovenfor kan man se all data fra tabellen `listenings`. Legg merke til at det mangler verdier til attributtet `listen_time` og også en verdi til attributtet `rating`. I databaseskriptet kan man se at disse attributtene hadde ikke en `NOT NULL`-betingelse, slik at de kunne få en verdi `NULL`, dvs. verdien er ikke påkrevd. Andre attributter i tabellen er påkrevd, siden `listen_id` er primærnøkkel og kan ikke være `NULL`, samt `user_id` og `song_id` har eksplisitt markert med `NOT NULL`-betingelsen, dvs. verdiene for disse attributtene er påkrevd i alle radene/postene.
+
+# Litt om NULL, mer senere
+```sql
+CREATE TABLE IF NOT EXISTS participants (
+    participant_id SERIAL PRIMARY KEY,      
+    age INT,             -- NULL tillatt
+    score FLOAT,         -- NULL tillatt
+    qualified boolean    -- NULL tillatt
+);
+INSERT INTO participants (age, score, qualified)
+VALUES
+    (23,NULL,FALSE),
+    (NULL,NULL,NULL),
+    (28, 6.0, TRUE),
+    (23,NULL,FALSE),
+    (30,4.0,TRUE);
+
+select count(*) from participants;
+ count 
+-------
+     5
+(1 row)
+
+select count(qualified) from participants;
+ count 
+-------
+     4
+(1 row)
+
+select avg(score) from participants;
+ avg 
+-----
+   5
+(1 row)
+
+select * from participants where qualified OR NOT qualified;
+ participant_id | age | score | qualified 
+----------------+-----+-------+-----------
+              1 |  23 |       | f
+              3 |  28 |     6 | t
+              4 |  23 |       | f
+              5 |  30 |     4 | t
+(4 rows)
+
+select COALESCE(score,0) from participants;
+ coalesce 
+----------
+        0
+        0
+        6
+        0
+        4
+(5 rows)
+
+select avg(age+score) from participants;
+ avg 
+-----
+  34
+(1 row)
+
+select avg(age+coalesce(score,0)) from participants;
+ avg  
+------
+ 28.5
+(1 row)
+
+select avg(coalesce(age,0)+coalesce(score,0)) from participants;
+ avg  
+------
+ 22.8
+(1 row)
+
+```
+- `COUNT(*)` teller alle rader i tabellen, uavhengig av innholdet i kolonnene.
+- `COUNT(qualified)` teller kun de radene hvor qualified-kolonnen har en verdi som ikke er NULL. Den ignorerer alle rader hvor qualified er NULL. I eksemplet så har vi en semantisk brist, siden vi har valgt type boolean og det kan være både sant og usant, dvs. sant betyr qualified og usant ikke qualified. Da kan vi ikke forvente at `COUNT(qualified)` vil gi oss antall deltakere som er kvalifisert, siden alle som har usant verdien også blir med i tellingen.
+- AVG-funksjonen, i likhet med SUM, MAX, og MIN, ignorerer NULL-verdier i beregningen.
+- COALESCE(score, 0) ersatter alle NULL-verdiene i kolonnen score med 0. Det kan da brukes for å beregne et gjennomsnitt for score, hvor også de som har NULL blir nå tatt med i beregningen. Men i noen tilfeller er det ønskelig å skille på 0 og NULL, for eksempel, hvis har forsøkt å ta kroppshevninger og ikke klarer noen, kan det representeres med 0, men hvis man ikke har forsøkt i det hele tatt, så blir det representert med NULL. 
+- Regnestykket age+score vil resultere i NULL for alle rader hvor  er NULL. SUM vil deretter summere disse verdiene, men ignorerer NULL-resultatene. Summen blir feil fordi den kun inkluderer deltakere som har en score som ikke er NULL. For å få riktig resultat, må man bruke COALESCE(score, 0) og eventuelt også COALESCE(age,0), siden vi har også NULL verdier i den kolonnen.
+- `select * from participants where qualified OR NOT qualified;` 
+    - Denne spørringen returnerer ikke alle rader. Den returnerer kun de radene hvor qualified er enten TRUE eller FALSE. 
+    - Den ekskluderer alle radene hvor qualified er NULL, fordi TRUE OR NULL er TRUE, FALSE OR NULL er NULL, og NULL OR NULL er NULL. WHERE-klausulen krever TRUE.
+
 
 # **use cases** (skrive sql-spørringer)
 
@@ -355,9 +438,65 @@ GROUP BY genre;
 - Vi kan lage en SQL-spørring som denormaliserer data: 
 ```sql
 SELECT * FROM songs
-LEFT JOIN 
+LEFT JOIN listenings on songs.song_id = listenings.song_id
+LEFT JOIN users on listenings.user_id = users.user_id;
+
+ song_id |      title       |    artist    |  genre  | listen_id | user_id | song_id | rating |     listen_time     | user_id |  name  |       email        
+---------+------------------+--------------+---------+-----------+---------+---------+--------+---------------------+---------+--------+--------------------
+       1 | Evermore         | Taylor Swift | Pop     |         1 |       1 |       1 |    4.5 | 2024-08-30 14:35:00 |       1 | Mickey | mickey@example.com
+       2 | Willow           | Taylor Swift | Pop     |         2 |       1 |       2 |    4.2 |                     |       1 | Mickey | mickey@example.com
+       6 | Yesterday        | Beatles      | Classic |         3 |       1 |       6 |    3.9 | 2024-08-29 10:15:00 |       1 | Mickey | mickey@example.com
+       2 | Willow           | Taylor Swift | Pop     |         4 |       2 |       2 |    4.7 |                     |       2 | Minnie | minnie@example.com
+       7 | Yellow Submarine | Beatles      | Classic |         5 |       2 |       7 |    4.6 | 2024-08-28 09:20:00 |       2 | Minnie | minnie@example.com
+example.comHey Jude         | Beatles      | Classic |         6 |       2 |       8 |    3.9 | 2024-08-27 16:45:00 |       2 | Minnie | minnie@--More-- 
+       1 | Evermore         | Taylor Swift | Pop     |         7 |       3 |       1 |    2.9 |                     |       3 | Daffy  | daffy@example.com
+       2 | Willow           | Taylor Swift | Pop     |         8 |       3 |       2 |    4.9 | 2024-08-26 12:30:00 |       3 | Daffy  | daffy@example.com
+       6 | Yesterday        | Beatles      | Classic |         9 |       3 |       6 |        |                     |       3 | Daffy  | daffy@example.com
+      10 | DJ Mix           | DJ           |         |           |         |         |        |                     |         |        | 
+       5 | Shivers          | Ed Sheeran   | Rock    |           |         |         |        |                     |         |        | 
+       4 | Photograph       | Ed Sheeran   | Rock    |           |         |         |        |                     |         |        | 
+       3 | Shape of You     | Ed Sheeran   | Rock    |           |         |         |        |                     |         |        | 
+       9 | Bad Blood        | Taylor Swift | Rock    |           |         |         |        |                     |         |        | 
+(14 rows)
+```
+- Repetisjon om normalisering
+- Vi ser redundans i dataene for song_id = 2, "Willow, Taylor Swift", som er repetert for 3 brukere (Mickey, Minnie og Daffy), som har hørt på den.
+- Vi ser også at det er "hull" i dataene, - ingen har hørt på sangene med sang_id 10, 5, 4, 3 og 9. 
+- Hva hvis vi bruker INNER JOIN (JOIN er ekvivalent INNER JOIN)?
+
+```sql
+SELECT * FROM songs INNER JOIN listenings on songs.song_id = listenings.song_id INNER JOIN users on listenings.user_id = users.user_id;
+SELECT * FROM songs JOIN listenings on songs.song_id = listenings.song_id JOIN users on listenings.user_id = users.user_id;
 ```
 
+- Hva hvis vi bruker kartesisk produkt? (vi får 360 rader, hvor de fleste har ingen logisk forhold)
+- Mer nyttig bruk av JOIN **R:bruker UC:05** Finn sangens id, tittel, artist og rating for alle sangene som har høyere rating enn 4.5: 
+
+```sql
+select songs.song_id, songs.title, songs.artist, listenings.rating from songs join listenings on songs.song_id = listenings.song_id where listenings.rating > 4.6;
+
+ song_id | title  |    artist    | rating 
+---------+--------+--------------+--------
+       2 | Willow | Taylor Swift |    4.7
+       2 | Willow | Taylor Swift |    4.9
+(2 rows)
+```
+
+- **R:bruker UC:06** Finn sangens id, tittel, artisk og gjennonsnittsrating for hver sang:
+
+```sql
+select songs.song_id, songs.title, songs.artist, avg(listenings.rating) from songs join listenings on songs.song_id = listenings.song_id group by songs.song_id, songs.title, songs.artist;
+
+select songs.song_id, songs.title, songs.artist, avg(listenings.rating) from songs join listenings on songs.song_id = listenings.song_id group by songs.song_id, songs.title, songs.artist;
+ song_id |      title       |    artist    |        avg         
+---------+------------------+--------------+--------------------
+       6 | Yesterday        | Beatles      |                3.9
+       2 | Willow           | Taylor Swift | 4.6000000000000005
+       7 | Yellow Submarine | Beatles      |                4.6
+       1 | Evermore         | Taylor Swift |                3.7
+       8 | Hey Jude         | Beatles      |                3.9
+(5 rows)
+``` 
 
 # Hva som skjer i kulissene?
 - Før vi går videre, skal vi se på i hvilken rekkefølge en DBHS prosesserer/tolker en SQL-spørring.f
@@ -384,6 +523,31 @@ LEFT JOIN
     - UNION ∪, SNITT ∩ og DIFFERANSE ∖
 
 ![Alt text](sql-query-cycle.png)
+
+Illustrasjon fra "Art of Problem Solving. Class Notes. cs145. Shiva. Fall, Rev1: 2023. Rev2: 2024"
+
+- Som det fremkommer fra tabellen og illustrasjonen ovenfor, utføres alle klausulene i den rekkefølgen de skrives, med unntak av **SELECT** (projeksjon), som prosesseres som nr. 6. 
+- **SELECT** operator spesifiserer *output* kolonner som trenges etter at spørringen er utført. Hvis vi ønsker å selektere de mest populære sangene, selekterer vi disse kolonenne, - tittel, artist, count(listenings.song_id) som døpes om til popular, fra tabellene songs og listenings. 
+    - **R:bruker UC:06** Finn top 10 sangene som brukere hører på.
+
+```sql
+select songs.title, songs.artist, count(listenings.song_id) as popular from songs join listenings on songs.song_id = listenings.song_id group by songs.title, songs.artist order by count(listenings.song_id) desc limit 10;
+```
+- **FROM** spesifiserer *input* tabeller hvor data skal selekteres fra. I denne spørringen (**R:bruker UC:06**) blir data hentet fra tabellene songs og listenings.
+- **JOIN** operator spesifiserer også input tabeller og gir mulighet til å kombinere rader fra to eller flere tabeller basert på relaterte kolonnene (vanligvis men ikke alltid fremmednøkke->primærnøkkel); kalles også likekoblinger på norsk. I denne spørrinen blir tabellene songs og listenings "joinet" (dvs. koblet sammen).
+- **WHERE** operator brukes for å filtrere rader som spørringen returnerer basert på spesifikk betingelse. Det brukes for å snevre inn resultatene basert på et kriteriet som må være tilfredsstilt for at en rad skal bli inkludert i resultatrelasjonen. 
+- **GROUP BY** operator brukes for å gruppere resultater basert på en eller flere kolonner. I denne spørringen vi gruperer resultater på artist og sangtittel kolonner, slik at vi kan telle hvor mange ganger hver sang har blitt hørt på.
+- **COUNT()** funksjon brukes for å teller antall rader i en kolonne. I denne spørringen teller vi antall ganger en sang er blitt hørt på ved å telle antall rader i listenings.song_id kolonnen, som har samme verdien for song_id. 
+- **ORDER BY** operator brukes for å sortere resultater basert på en eller flere kolonner i synkende eller stigende rekkefølge, slik at de mest populære sanger er på toppen i resultatrelasjonen. 
+- **LIMIT** operator brukes for å avgrense antall rader som blir returner i resultatrelasjonen. I dette tilfelle ønsker vi å avgrense resultatet til de 10 mest hørte sangene (spiller ingen rolle for vårt datagrunnlag, siden det er kun 5 sanger som noen har hørt på).
+
+# Hvordan "lese" SQL?
+- Hva er formålet med spørringen? Begynne med å forstå formålet. For eksempel, formålet med anbefalinger av sang er å finne tittel og artist for rekommenderte sanger for brukeren 'Minnie'. 
+- Hva er input og output? 
+    - SELECT klausulen (operator) er outputen til en spørring. For eksempel, outputen består av tittel og artisk kolonner fra tabellen songs. Resten av spørringen dreier seg om å generere outputen. 
+    - Analyser spørringen for å finne tabellene som er input i FROM og JOIN klausuler. 
+    - Hva er logikken for å endre data fra input-tabeller? Les resten av spørringen (fra toppen til bunnen eller fra venstre til høyre) ved å starte med FROM- eller JOIN-klausulen (input-tabeller), så se på WHERE klausulen, ORDER BY og til slutt LIMIT klausulen. Hver klausule spiller en spesifikk rolle i en spørring og hjelper til å filtrere (avgrense) og forme data for det neste steget (klausulene har en bestemt rekkefølge). Det er viktig å forstå hvordan hver klausule former dataene før neste steget. 
+    - Hvis man bruker delspørringer (f.eks. `select user_id from users where name='Minnie'`), bruk samme metoden for å finne ut hva hver klausulen gjør i hver delspørring og hva blir outputen fra hver delspørring i den overordnede spørringen (samme prinsippet når funksjoner kaller andre funksjoner).
 
 # LLM "tekst til SQL"
 - LLM - Large Language Model (store språkmodeller)
@@ -416,27 +580,7 @@ LEFT JOIN
     - Delspørringer og Common Table Expressions: for kompleks logikk vurder delspørringer og CTE for å dele opp problemet i mindre, mer håndterbare deler. 
     - Grensetilfeller: sjekk alltid grensetilfeller i datagrunnlaget, som f.eks., brukere med ingen aktivitet eller produkter med ingen rating. Test alltid dine spørringer med forskjellige eksempeldata, for å verifisere at de produserer korrekt resultat (ofte må man legge til mer spesifikke data for å se problemtilfeller).
 
-
-
-
-
-# Flere eksempel-modeller
-- Eksempel: capitalbikeshare
-- ride_id - tur identifikator (utleie?),
-- rideable_type
-- started_at
-- ended_at
-- start_station_name
-- start_station_id
-- end_station_name
-- end_station_id
-- start_lat
-- start_lng
-- end_lat
-- end_lng
-- member_casual
-
-- se også sanntidsdata i JSON-format
+- Vi fortsetter neste gang med delspørringer og andre mer avansert spørringer.
 
 
 
