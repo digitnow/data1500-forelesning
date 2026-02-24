@@ -207,32 +207,7 @@ networks:
 ```
 - I resultattabellen ovenfor kan man se all data fra tabellen `listenings`. Legg merke til at det mangler verdier til attributtet `listen_time` og også en verdi til attributtet `rating`. I databaseskriptet kan man se at disse attributtene hadde ikke en `NOT NULL`-betingelse, slik at de kunne få en verdi `NULL`, dvs. verdien er ikke påkrevd. Andre attributter i tabellen er påkrevd, siden `listen_id` er primærnøkkel og kan ikke være `NULL`, samt `user_id` og `song_id` har eksplisitt markert med `NOT NULL`-betingelsen, dvs. verdiene for disse attributtene er påkrevd i alle radene/postene.
 
-- Før vi går videre, skal vi se på i hvilken rekkefølge en DBHS prosesserer/tolker en SQL-spørring.
-- Vi antar at vi har tre tabeller T1, T2 og T3 og hver tabell har 3 kolonner hver (T1.K1, ..., T1.K3), (T2.K1, ..., T2.K3), (T3.K1, ..., T3.K3)
-|Reservert ord|Kommentar/Eksempel|Rekkefølge nr.|Relasjonsalgebra|
-|--|--|--|--|
-|**FROM**|T1, T2|1|T1 × T2|
-|INNER JOIN, JOIN, 
-NATURAL JOIN, 
-LEFT (OUTER) JOIN, 
-RIGTH (OUTER) JOIN, 
-CROSS JOIN
-Equi-join, 
-Theta-join, 
-Self-join, 
-Semi-join, 
-Anti-join, 
-Full-join
-
-
-
-- 𝜋_fornavn,etternavn(T)
-- PROJEKSJON 𝜋
-- SELEKSJON 𝜎 (∨, ∧, ¬, `>`, `<`, ≤, ≥, =)
-- OMDØPING 𝜌 (𝜌_T1.K1→a1)
-- KARTESISK PRODUKT ×
-- JOIN ⋈
-- UNION ∪, SNITT ∩ og DIFFERANSE ∖
+# **use cases** (skrive sql-spørringer)
 
 - La oss bruke begrepet **use case** (UC) om kravene for utvalg av spesifikke data fra databasen for en spesifikk brukerrolle (R)
 - **R:Bruker UC:01-1** Finn alle tittler and artister av sanger i sjanger "Classic".
@@ -317,16 +292,13 @@ FROM Songs
 where artist = 'Taylor Swift'
 GROUP BY genre;
 
-SELECT genre, count(*) as num_songs
-FROM Songs
-GROUP BY genre;
-
-SELECT artist, genre, count(*) as num_songs
-FROM Songs
-GROUP BY artist, genre;
-
+genre | num_songs 
+-------+-----------
+ Pop   |         2
+ Rock  |         1
+(2 rows)
 ```
-
+- Ser på all data i tabellen `songs`
 - `docker-compose exec postgres psql -U admin -d forel07 -c "select * from songs"`
 ```sql      
  song_id |      title       |    artist    |  genre  
@@ -358,27 +330,60 @@ LINE 1: SELECT artist, genre, count(*) as num_songs
 ```
 
 - Tips: Sørg alltid for at SELECT bare inkluderer kolonner i GROUP BY, eller aggregater av GROUP BY eller irrelevante kolonner (f.eks. SUM, COUNT, AVG osv.)
+- Viser viser antall sanger for artisten og sjanger, dvs. hvor mange sanger hver artisk har i hver sjanger:
 ```sql
 SELECT artist, genre, count(*) as num_songs
 FROM Songs
 GROUP BY artist, genre;
 ```
-- Same as qry_group_by_safe1: Just not showing artist.
-- You can see the genre, count columns identical to qry_group_by_safe1.
-- Takeaway: Query runs the same way, SELECT picks only the output columns
-
+- Ok, men viser ikke artisten; kan se antall sanger per sjanger. 
+- Lærdom: Utførelse er det samme men viser ikke artisten
 ```sql
--- qry_group_by_safe1a
 SELECT genre, count(*) as num_songs
 FROM Songs
 GROUP BY artist, genre;
--- qry_group_by_safe2
+```
+- Denne er annerledes, siden den viser kun antall sanger per sjanger uten å ta hensyn til artisten:
+```sql
 SELECT genre, count(*) as num_songs
 FROM Songs
 GROUP BY genre;
 ```
-- Which keyword helps filter unique values of a particular column?
 
+# En liten tur i denormalisering
+- Hva hvis vi lagret all data i en tabell? 
+- Vi kan lage en SQL-spørring som denormaliserer data: 
+```sql
+SELECT * FROM songs
+LEFT JOIN 
+```
+
+
+# Hva som skjer i kulissene?
+- Før vi går videre, skal vi se på i hvilken rekkefølge en DBHS prosesserer/tolker en SQL-spørring.
+- Vi antar at vi har tre tabeller T1, T2 og T3 og hver tabell har 3 kolonner hver (T1.K1, ..., T1.K3), (T2.K1, ..., T2.K3), (T3.K1, ..., T3.K3)
+
+|Reservert ord|Kommentar/Eksempel|Rekkefølge nr.|Relasjonsalgebra|
+|--|--|--|--|
+|**FROM**|T1, T2|1|T1 × T2|
+|**JOINS**|se egen illustrasjon|2| ⋈ |
+|**WHERE**|=,<>,!=,<,>,<=,>=, LIKE, ILIKE, AND, OR, NOT, EXISTS |3| 𝜎 |
+|**GROUP BY**|husk attributter må være i **SELECT** |4| |
+|**HAVING**|betingelser med aggregeringsfuknsjoner `AVG(T3.K1) > 20000` |5| 𝜎 |
+|**SELECT**| |6| 𝜋 |
+|**DISTINCT**|brukes i **SELECT** |7| |
+|**ORDER BY**|brukes for sortering ASC (standard) og DESC |8| |
+|**LIMIT / OFFSET**|brukes for å begrense antall rader i resultat-relasjonen |9| |
+
+- Repetisjon operatorer i relasjonsalgebra:
+    - PROJEKSJON 𝜋 (𝜋_fornavn,etternavn(T))
+    - SELEKSJON 𝜎 (∨, ∧, ¬, `>`, `<`, ≤, ≥, =)
+    - OMDØPING 𝜌 (𝜌_T1.K1→a1)
+    - KARTESISK PRODUKT ×
+    - JOIN ⋈
+    - UNION ∪, SNITT ∩ og DIFFERANSE ∖
+
+[Alt text](sql-query-cycle.png "a title")
 
 # LLM "tekst til SQL"
 - LLM - Large Language Model (store språkmodeller)
@@ -407,6 +412,10 @@ GROUP BY genre;
     - Hvordan brukes DISTINCT: kan skjule datakvalitet og er ikke alltid nødvendig, spesielt når brukt med agreggering.
     - Typer av JOIN: forstå forskjell på INNER, LEFT, RIGHT, og FULL OUTER JOIN. LEFT JOIN i kombinasjon med WHERE-klausul kan skape problemer, siden det kan produsere samme resultat som INNER JOIN 
 ![Alt text](sqljoins.png "a title")
+    - Aggregeringslogikk: alltid forsikre deg at GROUP BY-klausulen inkluderer alle ikke-aggregerte kolonner i SELECT.
+    - Delspørringer og Common Table Expressions: for kompleks logikk vurder delspørringer og CTE for å dele opp problemet i mindre, mer håndterbare deler. 
+    - Grensetilfeller: sjekk alltid grensetilfeller i datagrunnlaget, som f.eks., brukere med ingen aktivitet eller produkter med ingen rating. Test alltid dine spørringer med forskjellige eksempeldata, for å verifisere at de produserer korrekt resultat (ofte må man legge til mer spesifikke data for å se problemtilfeller).
+
 
 
 
