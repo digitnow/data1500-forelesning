@@ -1,5 +1,13 @@
 # Et virvar at tanker
 
+## Begreper
+- **Alleler**, eller genvarianter, er to eller flere varianter av samme gen med en bestemt plass i kromosomet. Ulike alleler kan gi opphav til ulike fenotyper, men det meste av genvariasjonen gir ikke opphav til varierende fenotypiske trekk. Enkelte egenskaper hos organismer skyldes bare ett allelpar, mens andre egenskaper uttrykkes av flere allelpar.
+- **Fenotype** er en mengde med observerbare fysiske egenskaper til en biologisk organisme (rød, hvite, blå blomster). Fenotype kan også bli påvirket av miljø.
+- **Genotype** er organismens genetiske informasjon. Genotype er arvelig. 
+- Det er mulig å predikere fenotype basert på genotype, men ikke nødvendigvis genotype fra fenotype.
+- **homozygot** dominant eller **heterozygot** genotype.
+- **ontogenese** (utvikling fra eggstadium til død) og **fylogenese** (læren, vitenskapen om organismegruppers utvikling gjennom tidene).
+
 ## Filosofi og KI
 - Utelukkende fokus på reaktive handlinger, - reguleringer, "etisk" bruk osv. Fanger opp "angst" eller "kollektiv angst" og kommer med ubegrunnede slutninger.
 - Ingen seriøs filosofisk tilnærming
@@ -8,10 +16,12 @@
 - Begrepet "antropomorfisk" - det å tillegge noe ikke-menneskelig menneskelige egenskaper eller å forstå det analogt til menneskelige forhold
 - Dette begrepet beskriver godt alle utsagn om hva "KI" skal være i en fremtid. Det er en uttrykk for en "drøm", som har like mye rot i virkelighet, som en "ånd", som "lever" i en fysisk regnemaskin, men som hverken har dimensjoner eller en reell, identifiserbar tilstedeværelse. 
 - Alle utsagn om alt det "fantastiske" som KI kan bringe til et menneskesamfunn er også fjernt fra en vitenskapelig tilnærming, siden hovedmetoden for vitenskapen er tvil, dvs. man bør tvile på om det er en grunn til å betrakte KI vitenskapelig i det hele tatt. Kunne menneskesamfunnet overleve uten digital teknologi? Erfaringer fra dagliglivet tilsier at man fint kunne klart seg uten digital teknologi. Til sammenligning kunne man ikke klart seg uten mat og sosialt (reelt) samvær.
+- Problemet med **symbolforankring**: «Hvordan kan den semantiske tolkningen av et formelt symbolsystem gjøres iboende i systemet?»
+
+### Moderne filosofi om KI
 - Hva kunne være en filosofisk (ikke antropomorfisk) tilnærming til dette? Eller hvilke spørsmål stiller en filosof om slik antropomorfisk tilnærming? 
 - Searls "strong AI", - en datamaskin som forstår og har kognitive tilstander (ingen vitenskap har en klar definisjon av hva det betyr å forstå; det finnes heller ingen klar definisjon av "kognitive tilstander" og slike kan hverken bevises eller observeres, man kan bare fantasere om dem)
-- "rammeproblem" (definert av KI-eksperter på slutten av 1900-tallet), eller kanskje "avgrensningsproblem", - KI klarer ikke selvstandig skille viktige faktorer fra uviktige når den prøver å håndtere noe i en bestemt situasjon (John McCarthy
-og Patrick J. Hayes i 1969). 
+- "rammeproblem" (definert av KI-eksperter på slutten av 1900-tallet), eller kanskje "avgrensningsproblem", - KI klarer ikke selvstandig skille viktige faktorer fra uviktige når den prøver å håndtere noe i en bestemt situasjon (John McCarthy og Patrick J. Hayes i 1969). 
 - Mennesker har også avgrenset minne- og prosesseringskapasistet, men det ser ut at de takler "rammeproblem" vesentlig bedre enn dagens KI artefakter.
 - Hubert Dreyfus mener at grunnen til at KI klarer ikke å løse "rammeproblemet" er at det ikke "forstår" (har ikke definert nok data og forhold mellom data?) hvilken type kunnskap er viktig for det selv i en gitt situasjon. En hendelse eller en objekt får mening bare hvis den er "plassert" (observert?) i en spesifikk situasjon.
 - I en "tradisjonell KI-forskning" tar man forutsetning om at et menneskets sinn setter verdi på verden som er satt sammen av meningsløse objekter og hendelser. En slik "forskning" kan aldri gjøre en kunstig intelligens menneskelig eller løse "rammeproblemet". 
@@ -21,21 +31,49 @@ og Patrick J. Hayes i 1969).
 - mennekser er alltid "nedsunket" i et nett med meninger
 - tidsperioder hvor mennesker befinner seg i en reell kontekst (ikke i en virtull verden), kan ikke bli modellert, dvs. er ikke mulig å modellere, dvs. lage en representasjon for; men KI-applikasjoner er basert på representasjon av den Kartesiske verden
 - menneske er i en symbiose med verden
-- teleologi - lære om at alt som skjer, styres av på forhånd gitte formål og hensikter (teleos - fullendt)
+- **teleologi** - lære om at alt som skjer, styres av på forhånd gitte formål og hensikter (teleos - fullendt)
+- **deontologi** - den oppfatning at moralsk pliktfølelse er et grunnleggende fenomen; grunnleggende for hvem og i hvilken kontekst? grunnleggende generelt uavhengig av homo sapiens selvbevissthet? Kan selvbevissthet studere selvbevissthet?
 
+### KI og politikk anno 2026
 - politiske handlinger i forhold til KI er relatert til maktkamp om fordeling av midler (et fiktivt overskudd generert av handlinger i "virtuelle rom"
 ); teknokrater har mer og mer kontroll på midlene, mens andre maktvillige mister kontroll
 - Marx: "I et samfunn som befinner seg i økende velstand, kan nå bare de aller rikeste leve av rentene på sine penger. Alle andre må sette sine penger inn i en bedrift eller kaste dem ut i handelen. Dermed blir konkurransen mellom kapitalistene større; de store kapitalistene ruinerer (JG: kjøper opp) de små og en del av de tidligere kapitalistene synker ned til arbeiderklassen, som på grunn av dette tilsiget dels på nytt igjen blir utsatt for et press på arbeidslønnen og blir enda mer avhengig av de få store kapitalistene; fordi antallet kapitalister blir mindre, forekommer det nesten ikke lenger noen konkurranse mellom dem ..." 
-- JG: Når det gjelder "digitale produkter" (som KI er en markedsføringsfane for i 2026), så begynner også disse være et middel for de store kapitalistene for å skape overarbeid hos arbeideren ved å bruke makten til  "digitale produkter" for å styre arbeiderens hverdag ved hjelp av gunstig konfigurerte algoritmer for seg selv. Kostnaden for å droppe de "digitale produktene" oppleves (ikke nødvendigvis er?) som for stor. Selv om et liv uten "digitale produkter" virker umulig, er det virkelig slik at man ikke kan leve uten dem? Det er et legitimt spørsmål å stille, når store summer av overskudd hos de store kapitalistene invisteres i miljøødeleggende og for mange "meningsløse" fabrikker (f.eks. serverparker, som er essensielle for KI applikasjoner). Applikasjoner er brikker i en byråkrati, hvis arkitektur er basert på en maskin-menneske symbiose. Mennesket blir maskinens / teknokratens / kapitalistens slave.
+- JG: Når det gjelder "digitale produkter" (som KI er en markedsføringsfane for i 2026), så begynner også disse være et middel for de store kapitalistene for å skape overarbeid hos arbeideren ved å bruke makten til  "digitale produkter" for å styre arbeiderens hverdag ved hjelp av gunstig konfigurerte algoritmer for seg selv. Kostnaden for å droppe de "digitale produktene" oppleves (ikke nødvendigvis er?) som for stor. Selv om et liv uten "digitale produkter" virker umulig, er det virkelig slik at man ikke kan leve uten dem? Det er et legitimt spørsmål å stille, når store summer av overskudd hos de store kapitalistene invisteres i miljøødeleggende og for mange "meningsløse" fabrikker (f.eks. serverparker, som er essensielle for KI applikasjoner). Applikasjoner er brikker i en byråkrati, hvis arkitektur er basert på en maskin-menneske symbiose. Mennesket blir maskinens / teknokratens / kapitalistens slave (bare se på alle menneskene i store byer som ser ned i teknologiske artefakter, - det er vanskelig å ikke beskrive det som en avhengighet). Teknologi er bare kultivert i samfunn som bryr seg om den. Hvordan blir et samfunn "avhengig" av teknologi, selv om det ikke er direkte relatert til overlevelse av arten? 
 - Marx: "... gjør arbeidsdelingen at arbeideren blir stadig mer ensidig og avhengig, på samme måte som den fører til konkurranse ikke bare mellom menneskene men også mellom maskinene..."
 - "La oss ikke hensette oss i en oppdiktet urtilstand, slik økonomen gjør når han vil forklare noe. En slik urtilstand forklarer ikke noe som helst. ... Således forklarer teologien det ondes opprinnelse med syndefallet, dvs. den forutsetter i historiens form som kjensgjerning nettopp det den skal forklare." Tar forutsetning om at noe er gitt for så å gi en forklaring på det. 
 
+### Mario Bunge
+- Mario Bunge (flere av disse beskrive "rammeproblem" - KI klarer ikke selvstandig skille viktige faktorer fra uviktige når den prøver å håndtere noe i en bestemt situasjon):
+    - Operasjoner er ikke spesifisert (mangler representasjon) i en biologisk hjerne; utsagn "en fugl beregnet sin kroppsbevegelse med en operasjon ..." virker meningsløs
+    - Homo sapiens er ikke designet av noen (evolusjon og erfaring ser ut til å forklare arten bedre enn en grand-design plan utført av noe/noen); mentale prosesser kan ikke betraktes adskilt fra den biologiske hjernen; menneskelig "programvare" vokser med "læring" (utvikling, evolusjon); sinn utvikler seg ikke av seg selv.
+    - [data]programmer er artefakter; algoritmer tilfredsstiller ikke kun visse regler, men også visse tekniske normer (konvensjoner), hvor noen er smarte, men noen ikke (må oppdateres / kan ikke oppdateres?).
+    - Kun rutinemessige beregninger er algoritmiske.
+    - IS tilhengere bruker ord informasjon, beregning, men kun på et metafysisk nivå
+    - *rasjonell prosess* (skiller av kognisjon fra emosjon, motivasjon, sosialitet) forklarer ikke / kan ikke adressere nyskjerrighet, læring; biologi er nærmere emosjon og sosial kontekst.
+    - Innovasjon og ulydighet; normer er påvirket av sosiale emosjoner (følelser); selvbesvisst og selvkritisk, bruker hint, "skjære hjørner", foreslår alternativer, forstår metaforisk språk.
+    - Hjerner er "sosiale".
+    - n-intensjonell kunnskap (kan vite at noen vet at noen vet noe ...).
+    - Kan skille mellom lagde ting og oppfunnede ting (dikotomi - oppdeling i kategorier som gjensidig utelukker hverandre); stoff/funksjon (kardiologi uten hjerte).
 
 ## Utviklingspsykologi og generell psykologi
+Har fulgt parallelle og separate løp. 
+
+Utviklingspsykologi tar ofte utgangspunkt / er påvirket av biologi og evolusjonsteori. Oppfinnere av utviklingspsykologi har vært opptatt av forholdet mellom ontogenese og fylogenese. I generell psykologi kom dette inn senere. 
+
 Fra lesing av artikkelen til Gabriella Airenti (2019, Department of Psychology, Center of Logic, Language, and Cognition, University of Torino, Turin, Italy).
 - Wundt (1879)
 - James Baldwin (deltok på Wundts seminarer i Tyskland) https://en.wikipedia.org/wiki/James_Mark_Baldwin
-- Baldwin inspirerte Piaget, som har mange bidrag i **utviklingspsykologi**
+    - Baldwin prøvde å koble sammen utviklingspsykologi (utvikling av menneskesinnet) med evolusjonsteori
+    - 1909 - 1934 ble tvunget av en konflikt til å flytte til Paris
+        - Etter at Mendels arv ble mer og mer akseptert, ble Baldwins teorier utfordret
+        - **Dominansloven**: Denne loven sier at når to forskjellige egenskaper krysses, vil den dominante egenskapen vises hos avkommet, mens den recessive egenskapen kan være skjult.
+        - **Segregeringsloven**: Hvert individ bærer to alleler for hver egenskap, ett arvet fra hver forelder. Under gametdannelsen segregerer disse allelene slik at hver gamet bare bærer ett allel for hver egenskap.
+        - **Loven om uavhengig assortering**: Dette prinsippet indikerer at arv av én egenskap ikke påvirker arv av en annen egenskap, forutsatt at genene er på forskjellige kromosomer.
+        - Baldwin diskuterte ontogenese og fylogenese med Pierre Janet. 
+        - Piaget deltok op Janets forelesninger rett etter første verdenskrig og ble eksponert for Baldwins idéer
+        - Piaget selv mente ikke at Baldwins idéer/teorier hadde sterk påvirkning på hans tenkning, men Piagets fokus på stadig mer utdypede stadier av kognitiv utvikling gjenspeiler viktige temaer i Baldwins arbeid.
+        - Piaget aksepterer ikke Baldwins idéer om overføring av kultur, som Baldwin kaller for **sosial arv**.
+        - På 2010-tallet ble Baldwins teorier igjen diskutert (Morgan & Harris, 2015, "James Mark Baldwin and contemporary theories of culture and evolution") som viktige for utviklingspsykologier, spesielt kulturell læring i tidlige faser av kognitiv utvikling. 
 
 - Motivasjonsbasert
 - Epistemisk (den sikre viten eller kunnskap; velbegrunnet viten)
