@@ -61,8 +61,7 @@ Fra lesing av artikkelen til Gabriella Airenti (2019, Department of Psychology, 
 - Tingens natur.
 - Hvis du ønsker å forstå deg selv, lev nå (i dette øyeblikket). 
 - PERLS (ta et ark og skriv «jeg ...»).
-- Eksempel:
-«Jeg står i bygg B (UiA) og er klar for å godkjenne Seminar III for studentene, men ingen er her. Jeg hører på Петухов og beskriver dette øyeblikket. Bekymringene er ubegrunnet. Hva trenger jeg å adressere nå? Jeg har ingen klar plan, så jeg tenker fritt/kaotisk. Jeg har flere oppgaver, som stadig vender tilbake til min bevissthet. Sende mail til Tone og Arvid om coastal NM. Gå bort fra detaljer, prøv å oppleve helhet.»
+
 
 
 ## Introspeksjon
