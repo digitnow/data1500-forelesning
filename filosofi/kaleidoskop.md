@@ -69,8 +69,8 @@ Fra lesing av artikkelen til Gabriella Airenti (2019, Department of Psychology, 
         - **Dominansloven**: Denne loven sier at når to forskjellige egenskaper krysses, vil den dominante egenskapen vises hos avkommet, mens den recessive egenskapen kan være skjult.
         - **Segregeringsloven**: Hvert individ bærer to alleler for hver egenskap, ett arvet fra hver forelder. Under gametdannelsen segregerer disse allelene slik at hver gamet bare bærer ett allel for hver egenskap.
         - **Loven om uavhengig assortering**: Dette prinsippet indikerer at arv av én egenskap ikke påvirker arv av en annen egenskap, forutsatt at genene er på forskjellige kromosomer.
-        - Baldwin diskuterte ontogenese og fylogenese med Pierre Janet. 
-        - Piaget deltok op Janets forelesninger rett etter første verdenskrig og ble eksponert for Baldwins idéer
+        - Baldwin diskuterte ontogenese og fylogenese med Pierre Janet https://en.wikipedia.org/wiki/Pierre_Janet
+        - Piaget https://en.wikipedia.org/wiki/Jean_Piaget deltok op Janets forelesninger rett etter første verdenskrig og ble eksponert for Baldwins idéer
         - Piaget selv mente ikke at Baldwins idéer/teorier hadde sterk påvirkning på hans tenkning, men Piagets fokus på stadig mer utdypede stadier av kognitiv utvikling gjenspeiler viktige temaer i Baldwins arbeid.
         - Piaget aksepterer ikke Baldwins idéer om overføring av kultur, som Baldwin kaller for **sosial arv**.
         - På 2010-tallet ble Baldwins teorier igjen diskutert (Morgan & Harris, 2015, "James Mark Baldwin and contemporary theories of culture and evolution") som viktige for utviklingspsykologier, spesielt kulturell læring i tidlige faser av kognitiv utvikling. 
