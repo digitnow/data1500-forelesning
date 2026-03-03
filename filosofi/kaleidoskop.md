@@ -10,7 +10,7 @@
 
 ## Filosofi og KI
 - Utelukkende fokus på reaktive handlinger, - reguleringer, "etisk" bruk osv. Fanger opp "angst" eller "kollektiv angst" og kommer med ubegrunnede slutninger.
-- Ingen seriøs filosofisk tilnærming
+- Lite fokus på filosofisk tilnærming til kunstig intelligens i 2026 (Heidegger og idéer om baby-roboter og cyborger)
 - Spekulasjon / synsing om en en generell kunstig intelligens som kunne ha (*skal før eller siden få*) "resonnering og persepsjon – pluss språk, kreativitet og følelser." Det blir betraktet som en subjekt, en eller annen type "vesen" (antropomorfisk)
 - Begrepet "resonnering" kan ha nyanserte tolkninger, - tenke; reflektere; overveie; tenke logisk; dra fornuftsslutninger; tenke foruftig; beregning; argumentere.
 - Begrepet "antropomorfisk" - det å tillegge noe ikke-menneskelig menneskelige egenskaper eller å forstå det analogt til menneskelige forhold
@@ -31,8 +31,11 @@
 - mennekser er alltid "nedsunket" i et nett med meninger
 - tidsperioder hvor mennesker befinner seg i en reell kontekst (ikke i en virtull verden), kan ikke bli modellert, dvs. er ikke mulig å modellere, dvs. lage en representasjon for; men KI-applikasjoner er basert på representasjon av den Kartesiske verden
 - menneske er i en symbiose med verden
-- **teleologi** - lære om at alt som skjer, styres av på forhånd gitte formål og hensikter (teleos - fullendt)
+- **teleologi** - lære om at alt som skjer, styres av på forhånd gitte formål og hensikter (teleos - fullendt); det motsatte av materialisme?; "intelligent design argumentet" eller "argumentet fra Design"; er moderne designteorier teleologiske? er de også teologiske? "verden er designet av noen og noen trekker i trådene, som da blir en forklaring på hvorfor ting er som de er og noe skjet på en måte det skje på"; Aristotle -> kosmos har en intelligent årsak (uten å si noe om hva er intelligent!);
 - **deontologi** - den oppfatning at moralsk pliktfølelse er et grunnleggende fenomen; grunnleggende for hvem og i hvilken kontekst? grunnleggende generelt uavhengig av homo sapiens selvbevissthet? Kan selvbevissthet studere selvbevissthet?
+- **kaos** - verden er en ordnet struktur, som er blitt pålagt en på foran eksisterende entitet, nemlig en substrat (et underliggende lag), materie eller en bakgrunn, som så langt det gjelder ens egen natur er ustrukturert (hvem strukturerer verden og hvorfor? er struktur nødvendig?)
+- kosmogoni - en forklaring på / et studie av universets opprinnelse (gresk filosofi: en kreativ kraft er nødvendig for å sette en retning i en pågående prosess av kosmogoni; mens alle goder har en familiebånd, er ikke mennesker av den samme slekten (ikke samme geneologi), - de er fabrikerte produkter; mennesket er ikke en del av en guddommelig kosmisk struktur, men er et sekundært produkt; virvel modeller av verden beskrevet av Anaximander.
+- **intelligens (Piaget)** - intelligens er tilpasning (en prosess), og kan beskrives som et forhold mellom organisme og miljøet (JG: forutsetter at organisme er ikke en del av miljøet?); liv er en skapelse av mer og mer komplekse former og en progressiv balanse mellom disse formene med miljøet rundt (JG: hva er mer kompleks enn noe annet? hva er progressivt?); hvis man sier at intelligens er en instans av biologisk tilpasning (til miljøet), så er man også nødt til å si at det er en organisasjon og at en funksjon til denne organisasjonen er å strukturere universet på samme måten som en organisme strukturerer sine umiddelbare omgivelser; for å beskrive en funksjonell mekanisme (JG: systemteorien kommer inn?) til tenkning kun med biologisk terminologi, skulle være nok til å fastsette alle invarianter (noe som aldri endrer seg) som er felles til all strukturering som et liv er i stand til.
 
 ### KI og politikk anno 2026
 - politiske handlinger i forhold til KI er relatert til maktkamp om fordeling av midler (et fiktivt overskudd generert av handlinger i "virtuelle rom"
