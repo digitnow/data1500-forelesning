@@ -139,3 +139,7 @@ Bidragsytere til Wikimedia-prosjektene. (2008, May 29). Paradoksal intensjon. Wi
 
 Airenti, G. (2019). The Place of Development in the History of Psychology and Cognitive Science. Frontiers in Psychology, 10. https://doi.org/10.3389/fpsyg.2019.00895
 
+JG. 2026. Forelesning 7, intro i SQL, eksempelmodel våren 2026. /Users/janisg/test/data1500-forelesning07/
+
+Baillargeon, R., Scott, R. M., & Bian, L. (2016). Psychological Reasoning in Infancy. Annu. Rev. Psychol., (Volume 67, 2016), 159–186. doi: 10.1146/annurev-psych-010213-115033
+
