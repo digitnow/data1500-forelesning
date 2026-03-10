@@ -10,7 +10,9 @@
 ## CASE
 - Valguttrykk i SQL, - CASE (MySQL har også IF)
 - For å generere forskjellig output basert på flere betingelser.
-- UC01-1: marker alle varer som koster 
+- Se eksempel på slide #5 (hvordan *bevise* at spørringen produserer korrekt også "Ingen medier" og "Mange medier"?).
+- Et eksempel mot "hobbyhuset"-modellen.
+- **use case** marker alle varer som koster 
     - mindre enn 100 kr med "billig",
     - mellom 100 og 500 med "middels", 
     - og over 500 (alle andre) med "dyr"
@@ -25,7 +27,7 @@ select vnr, betegnelse, pris,
 from vare;
 ```
 
-UC01-2: Tell antall varer i de tre kategoriene (billig, middels, dyr):
+- **use case**: Tell antall varer i de tre kategoriene (billig, middels, dyr):
 ```sql
 select count(*) as ant,     
     case
@@ -42,7 +44,7 @@ from vare group by prisklasse;
     64 | middels
 ```
 
-UC01-3: Sorter slik at `dyr` er på toppen, så `middels` og så `billig` eller eventuelt omvendt (med desc):
+- **use case**: Sorter slik at `dyr` er på toppen, så `middels` og så `billig` eller eventuelt omvendt (med desc):
 ```sql
 select ant, prisklasse
 from 
@@ -68,10 +70,11 @@ order by
   80 | billig
 ``` 
 
-I løsningen for UC01-3 bruker vi en ny `case-end`-konstruksjon for å definere heltallsverdier for sortering. 
+I løsningen for denne "use case" bruker vi en ny `case-end`-konstruksjon for å definere heltallsverdier for sortering. 
 
-- Vi kan også bruke case-end`-konstruksjon for å generere testdata.
-- UC02: generer testdata for 100 sykler i tabellen `sykler` (ref. modellen fra oblig 1) basert på eksisterende data `stasjoner` og `laaser`:
+## Ekstra: Bruken av CASE for å generere testdata
+- Vi kan også bruke `case-end`-konstruksjon for å generere testdata.
+- **use case**: generer testdata for 100 sykler i tabellen `sykler` (ref. modellen fra oblig 1) basert på eksisterende data `stasjoner` og `laaser`:
 ```sql 
 insert into sykler (modell, innkjopsdato, stasjon_id, laas_id)
 select
@@ -100,6 +103,7 @@ from (
 - `status` er ikke nødvendlig, hvis vi bruker `stasjon_id` og `laas_id`for sykler som er utleid (blir satt til `tilgjengelig`, kunne bli satt til `udefinert`; eller man kunne bruke status for å sykkel trenger reparasjon, f.eks.).
 - Kun med `CASE` kan vi ikke sette både `stasjon_id` og `laas_id` til NULL på samme rad. 
 - Hvis vi ønsker å sette NULL der hvor enten `stasjon_id` og `laas_id` er NULL, må vi utføre en ekstra SQL-kommando (eller eventuelt bruke en `procedure` eller `function`; eventuelt en do-end blokk?)
+
 ```sql
 select * from sykler where stasjon_id IS NULL or laas_id IS NULL;
 ``` 
@@ -139,8 +143,8 @@ select * from temp_sykler where stasjon_id IS NULL or laas_id IS NULL;
 update temp_sykler set stasjon_id = NULL, laas_id = NULL where stasjon_id IS NULL or laas_id IS NULL;
 ```
 
-## Litt ekstra om funksjoner og triggere i Postgres
-- La oss tenke en "use case" hvor vi ønsker å lagre lokasjon for hver sykkel. Koordinatene for stasjonenen er faste, men hva hvis vi også ønsker å se på hvor de utleide syklene er til enhver tid. 
+## Ekstra: om funksjoner og triggere i Postgres
+- La oss tenke en ekstra-"use case" (vil bli brukt når vi går gjennom transaksjoner og NoSQL) hvor vi ønsker å lagre lokasjon for hver sykkel. Koordinatene for stasjonenen er faste, men hva hvis vi også ønsker å se på hvor de utleide syklene er til enhver tid. 
 - Kan bruke Postgis utvidelse, men i demoen her bruker vi en array-type i Postgres. 
 
 ```sql 
@@ -229,37 +233,322 @@ Indexes:
 ```
 
 
-## 
-
-
-## DO-END (Postgres)
-Eller med ´do-end´ og ´loop´ konstruksjoner i Postgres:
+## Views
+### Eksemepel på felleskaps-modellen
 
 ```sql 
-do $$
-declare 
-    for i in 1..100 loop
-        insert into sykler (modell, innkjopsdato, status, stasjon_id, laas_id)
-        values ('Modell ' || i, current_date - (i % 30), 'tilgenelig', (i % 7 + 1), (i % (7 *20) + 1));
-    end loop
-end $$
+CREATE VIEW aktive_prosjekter AS
+  SELECT p.tittel, 
+         COUNT(m.medie_id) AS antall_medier
+  FROM prosjekter p
+  LEFT JOIN medier m 
+         ON p.prosjekt_id = m.prosjekt_id
+  GROUP BY p.prosjekt_id, p.tittel;
+ 
+-- Bruk som vanlig tabell
+SELECT * FROM aktive_prosjekter 
+  WHERE antall_medier > 5;
+``` 
 
+### Eksemepler på hobbyhuset-modellen
+-oppdaterbarhet:
+```sql 
+create view antallvarerprkategori as 
+    select katnr, count(*) as antall
+    from vare
+    group by katnr;
+-- output: 
+     katnr | antall 
+-------+--------
+     4 |     18
+    21 |      4
+    14 |     11
+-- ...........
+``` 
+- Kan vi oppdatere view? For eksempel endre antall for kategori 12 fra 4 til 1? Men hvilke tre at radene i varer skal vi da slette? Det vil ikke funksjonere. Views med `GROUP BY` og `COUNT` er ikke oppdaterbare. 
+- Feilmeldning man får hvis man prøver `update antallvarerprkategori set antall = 1 where katnr = 21;`:
+```
+ERROR:  cannot update view "antallvarerprkategori"
+DETAIL:  Views containing GROUP BY are not automatically updatable.
+HINT:  To enable updating the view, provide an INSTEAD OF UPDATE trigger or an unconditional ON UPDATE DO INSTEAD rule.
+```
+- Også views hvor primærnøkkel er ikke med i SELECT-delen, og hvor SELECT-delen inneholder uttrykk med funksjoner eller konstanter, samt delspørringer og koblinger av flere tabeller er **ikke oppdaterbare**. 
+- Et annet eksempel for oppdaterbarhet:
+```sql 
+create view varermedkategorinavn (vnr, betegnelse, vkatnr, kkatnr, navn) as 
+    select v.vnr, v.betegnelse, v.katnr, k.katnr, k.navn 
+    from vare v, kategori k
+    where v.katnr = k.katnr;
+```
+- Postgres gir en feilmelding hvis vi prøver på `update varermedkategorinavn set vkatnr = 3 where vnr = '10820';`:
+```
+ERROR:  cannot update view "varermedkategorinavn"
+DETAIL:  Views that do not select from a single table or view are not automatically updatable.
+HINT:  To enable updating the view, provide an INSTEAD OF UPDATE trigger or an unconditional ON UPDATE DO INSTEAD rule.
+```
+
+### Eksempel på materialisert view (hobbyhuset-modellen)
+
+- Eksempel på vanlig view (ikke materialisert, dvs. utfører grunnspørring(-er) hver gang man kaller opp view).
+```sql
+create view kunder_haugesund_omraadet as 
+    select ordre.*, fornavn, etternavn, poststed
+    from ordre join 
+        (kunde join poststed on kunde.postnr = poststed.postnr)
+    on ordre.knr = kunde.knr 
+    where poststed.postnr::int between 5500 and 5599;
+```
+```sql
+create materialized view mv_kunder_haugesund_omraadet as 
+    select ordre.*, fornavn, etternavn, poststed
+    from ordre join 
+        (kunde join poststed on kunde.postnr = poststed.postnr)
+    on ordre.knr = kunde.knr 
+    where poststed.postnr::int between 5500 and 5599;
+```
+
+- Sjekke status i databasen:
+```sql
+hobbyhuset=# \dv
+                 List of relations
+ Schema |           Name            | Type | Owner 
+--------+---------------------------+------+-------
+ public | antallvarerprkategori     | view | admin
+ public | kunder_haugesund_omraadet | view | admin
+ public | varermedkategorinavn      | view | admin
+(3 rows)
+
+hobbyhuset=# \dm
+                         List of relations
+ Schema |             Name             |       Type        | Owner 
+--------+------------------------------+-------------------+-------
+ public | mv_kunder_haugesund_omraadet | materialized view | admin
+(1 row)
+```
+
+- Sammenligner **view** og **materialized view**:
+```sql
+explain analyze select * from kunder_haugesund_omraadet;
+                                                                   QUERY PLAN                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=139.32..200.59 rows=11 width=42) (actual time=1.089..1.466 rows=34 loops=1)
+   Hash Cond: (ordre.knr = kunde.knr)
+   ->  Seq Scan on ordre  (cost=0.00..52.92 rows=2192 width=21) (actual time=0.016..0.204 rows=2192 loops=1)
+   ->  Hash  (cost=139.29..139.29 rows=3 width=25) (actual time=1.031..1.033 rows=5 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         ->  Nested Loop  (cost=0.29..139.29 rows=3 width=25) (actual time=0.174..1.010 rows=5 loops=1)
+               ->  Seq Scan on kunde  (cost=0.00..10.12 rows=512 width=22) (actual time=0.004..0.057 rows=512 loops=1)
+               ->  Memoize  (cost=0.29..0.67 rows=1 width=13) (actual time=0.002..0.002 rows=0 loops=512)
+                     Cache Key: kunde.postnr
+                     Cache Mode: logical
+                     Hits: 336  Misses: 176  Evictions: 0  Overflows: 0  Memory Usage: 12kB
+                     ->  Index Scan using poststedpn on poststed  (cost=0.28..0.66 rows=1 width=13) (actual time=0.004..0.004 rows=0 loops=176)
+                           Index Cond: (postnr = kunde.postnr)
+                           Filter: (((postnr)::integer >= 5500) AND ((postnr)::integer <= 5599))
+                           Rows Removed by Filter: 1
+ Planning Time: 0.945 ms
+ Execution Time: 1.580 ms
+(17 rows)
+```
+
+```sql 
+explain analyze select * from mv_kunder_haugesund_omraadet;
+                                                         QUERY PLAN                                                         
+----------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on mv_kunder_haugesund_omraadet  (cost=0.00..12.00 rows=200 width=375) (actual time=0.019..0.023 rows=34 loops=1)
+ Planning Time: 0.502 ms
+ Execution Time: 0.050 ms
+(3 rows)
+```
+
+- Men hva med oppdaterbarhet? 
+- Hvis du bruker en **materialized view**, lagres dataene, og oppdateringene skjer ikke automatisk. Du trenger å kjøre REFRESH MATERIALIZED VIEW for å oppdatere dataene i materialized view-en.
+
+```sql
+update ordre set erbetalt = false where ordrenr = 22418; 
+select * from ordre where ordrenr = 22418;
+select * from mv_kunder_haugesund_omraadet where ordrenr = 22418;
+refresh materialized view mv_kunder_haugesund_omraadet;
+select * from mv_kunder_haugesund_omraadet where ordrenr = 22418;`
+```
+
+## Delspørringer
+Se slides 7-16. 
+
+
+## Vindusfunksjoner (Window Functions)
+
+Window functions utfører beregninger på et sett med rader som er relatert til den nåværende raden, uten å kollapse radene til én (slik `GROUP BY` gjør). De brukes til rangeringer, løpende totaler, og sammenligninger innenfor grupper.
+
+**Generell syntaks:**
+```sql
+funksjon() OVER (
+    [PARTITION BY kolonne]  -- Del opp i grupper
+    [ORDER BY kolonne]      -- Sorter innenfor gruppen
+)
+```
+
+**Vanlige window functions:**
+
+| Funksjon | Beskrivelse |
+|----------|-------------|
+| `RANK()` | Gir rang med hopp ved like verdier (1, 2, 2, 4) |
+| `DENSE_RANK()` | Gir rang uten hopp ved like verdier (1, 2, 2, 3) |
+| `ROW_NUMBER()` | Gir unikt løpenummer per rad |
+| `SUM() OVER (...)` | Løpende sum |
+| `AVG() OVER (...)` | Løpende eller partisjonert gjennomsnitt |
+
+```sql
+-- Ranger prosjekter innenfor hvert fellesskap basert
+-- på antall medier de bruker
+SELECT 
+    f.navn AS fellesskap, 
+    p.tittel AS prosjekt, 
+    COUNT(m.medie_id) AS antall_medier, 
+    RANK() OVER ( 
+PARTITION BY f.fellesskap_id 
+ORDER BY COUNT(m.medie_id) DESC ) 
+  AS rangering 
+FROM fellesskap f 
+JOIN prosjekter p 
+    ON f.fellesskap_id = p.fellesskap_id 
+LEFT JOIN medier m 
+    ON p.prosjekt_id = m.prosjekt_id 
+GROUP BY 
+    f.fellesskap_id, 
+    f.navn, 
+    p.prosjekt_id, 
+    p.tittel;
+-- output:
+        fellesskap         |           prosjekt           | antall_medier | rangering 
+---------------------------+------------------------------+---------------+-----------
+ Dataingeniør-fellesskapet | Semesterprosjekt i databaser |             1 |         1
+ Maskinlæring-gruppa       | Analyse av sentiment i tekst |             1 |         1
+(2 rows)
+``` 
+- hva skal til for å få et mer meningsfull output?
+
+- Annet eksempel (hobbyhuset-modellen)
+
+```sql
+SELECT
+    V.Betegnelse,
+    K.Navn AS Kategori,
+    V.Pris,
+    RANK() OVER (PARTITION BY K.Navn ORDER BY V.Pris DESC) AS Rang
+FROM Vare V
+JOIN Kategori K ON V.KatNr = K.KatNr
+where k.navn = 'Busker';¨
+-- output:
+     betegnelse     | kategori |  pris  | rang 
+--------------------+----------+--------+------
+ Gul søyletuja      | Busker   | 550.00 |    1
+ Hengebjørk         | Busker   | 412.50 |    2
+ Dvergtuja          | Busker   | 412.00 |    3
+ Japanbarlind       | Busker   | 412.00 |    3
+ Sølvgran 'Globosa' | Busker   | 329.50 |    5
+ Røsslyng           | Busker   | 274.50 |    6
+ Europabarlind      | Busker   | 274.50 |    6
+ Einer 'Tyrihans'   | Busker   | 247.00 |    8
+ Hvitgran           | Busker   | 221.00 |    9
+ Einer 'Blåmann'    | Busker   | 220.50 |   10
+ Gran, standard     | Busker   | 166.00 |   11
+(11 rows)
+``` 
+
+```sql
+SELECT
+    V.Betegnelse,
+    K.Navn AS Kategori,
+    V.Pris,
+    DENSE_RANK() OVER (PARTITION BY K.Navn ORDER BY V.Pris DESC) AS Rang
+FROM Vare V
+JOIN Kategori K ON V.KatNr = K.KatNr
+where k.navn = 'Busker';
+-- output:
+     betegnelse     | kategori |  pris  | rang 
+--------------------+----------+--------+------
+ Gul søyletuja      | Busker   | 550.00 |    1
+ Hengebjørk         | Busker   | 412.50 |    2
+ Dvergtuja          | Busker   | 412.00 |    3
+ Japanbarlind       | Busker   | 412.00 |    3
+ Sølvgran 'Globosa' | Busker   | 329.50 |    4
+ Røsslyng           | Busker   | 274.50 |    5
+ Europabarlind      | Busker   | 274.50 |    5
+ Einer 'Tyrihans'   | Busker   | 247.00 |    6
+ Hvitgran           | Busker   | 221.00 |    7
+ Einer 'Blåmann'    | Busker   | 220.50 |    8
+ Gran, standard     | Busker   | 166.00 |    9
+(11 rows)
+``` 
+
+## Common Table Expressions (CTEs)
+
+En CTE (Common Table Expression) er en midlertidig, navngitt resultattabell som defineres med `WITH`-nøkkelordet. CTEs gjør komplekse spørringer mer lesbare ved å dele dem opp i logiske steg.
+
+**Generell syntaks:**
+```sql
+WITH navn_paa_cte AS (
+    SELECT ...   -- Definer den midlertidige tabellen
+)
+SELECT *         -- Bruk den midlertidige tabellen
+FROM navn_paa_cte
+WHERE ...;
+```
+
+## Rekursjon: er det mulig i SQL?
+```sql 
+-- som bruker 'admin' i db-shell
+create database rekursivitet;
+```
+
+```bash
+# fra kommandovinduet på vertsmaskinen
+docker-compose exec postgres psql -U admin -d rekursivitet -f test-scripts/rekursiv-cte-kategorier.sql
 ```
 
 ```sql
-create procedure int_div (
-    in x int,
-    in y int,
-    out d int,
-    out r int
-)
-begin
-    set d = x div y;
-    set r = x mod y;
-end
-``` 
+-- Konseptuelt eksempel: Finn alle underkategorier 
+WITH RECURSIVE kategorier_hierarki AS (
 
-## Liste ut alle triggere i en database
+-- 1. Ankerleddet (Startpunktet) 
+SELECT kategori_id, navn, forelder_id, 1 AS nivaa 
+FROM kategorier 
+WHERE forelder_id IS NULL 
+
+UNION ALL
+
+-- 2. Rekursivt ledd (Refererer til seg selv) 
+SELECT k.kategori_id, k.navn, k.forelder_id, kh.nivaa + 1 
+FROM kategorier k 
+JOIN kategorier_hierarki kh 
+    ON k.forelder_id = kh.kategori_id ) 
+SELECT * FROM kategorier_hierarki ORDER BY nivaa;
+
+-- outuput:
+ kategori_id |       navn       | forelder_id | nivaa 
+-------------+------------------+-------------+-------
+           1 | Elektronikk      |             |     1
+           4 | Sport            |             |     1
+           2 | Datamaskiner     |           1 |     2
+           3 | Mobiltelefoner   |           1 |     2
+          10 | Sykkel           |           4 |     2
+           5 | Bærbare PC-er    |           2 |     3
+           6 | Stasjonære PC-er |           2 |     3
+           7 | Smarttelefoner   |           3 |     3
+           8 | Tilbehør         |           3 |     3
+          11 | Terrengsykkel    |          10 |     3
+          12 | Bysykkel         |          10 |     3
+           9 | Deksel           |           8 |     4
+(12 rows)
+``` 
+- output bygges opp rekursivt:
+```sql
+(SELECT kategori_id, navn, forelder_id, 1 AS nivaa FROM kategorier WHERE forelder_id IS NULL) UNION ALL (SELECT k.kategori_id, k.navn, k.forelder_id, kh.nivaa + 1 FROM kategorier k JOIN (SELECT kategori_id, navn, forelder_id, 1 AS nivaa FROM kategorier WHERE forelder_id IS NULL) as kh ON k.forelder_id = kh.kategori_id);
+```
+
+## Diverse
+### Liste ut alle triggere i en database
 
 ```sql
 SELECT
@@ -278,5 +567,5 @@ WHERE
     NOT tgisinternal;  -- Filter out internal triggers
 ``` 
 
-## Liste ut alle funksjoner (og prosedurer)
+### Liste ut alle funksjoner (og prosedurer)
 `\df` 
