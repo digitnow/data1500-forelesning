@@ -1,11 +1,16 @@
 # Fra pensumsboken
-- Man kan gjøre en del av beregninger og analyser på databaselaget
-- **views** - virtuelle tabeller eller *navngitte* spørringer.
-- **delspørringer** - *nøstede* spørringer, f.eks. skrive en spørring som en del av en spørring (*nøste* spørringer i hverandre).
+- Databasehåndteringssystemer er i dag mer en kun lagring og henting av data.
+- Verktøy for databehnadling man kan klare seg uten, men som kan være meget nyttige (godt å vite, og nødvendig å vite for en god utvikler).
+- Man kan gjøre en del av beregninger og analyser i databaselaget.
+- **case** muligheter for å gjøre valg for å presentere output på en spørring.
+- **Views** - virtuelle tabeller eller *navngitte* spørringer.
+- **Delspørringer** - *nøstede* spørringer, f.eks. skrive en spørring som en del av en spørring (*nøste* spørringer i hverandre).
 - Utførelsen begynner med den *innerste* spørringen. 
 - Kan sammenlignes med funksjoner f(g(x)), hvor en funksjon er et argument til en annen funksjon. 
-- Avanserte aggregeringsteknikker med grupperingsvarianter.
-- Vindusfunksjoner. 
+- **Vindusfunksjoner**, - kan gjøre mer med aggregering (kan rangere data, f.eks.)
+- **CTE** (Common Table Expression), - kan dele opp komplekse problemer i flere deler (ligner på delspørring, men muligens mer oversiktlig)
+- **OLAP og datavarehus**, - avanserte aggregeringsteknikker med grupperingsvarianter (ROLLUP, CUBE).
+ 
 
 ## CASE
 - Valguttrykk i SQL, - CASE (MySQL har også IF)
@@ -482,7 +487,7 @@ where k.navn = 'Busker';
 (11 rows)
 ``` 
 
-## Common Table Expressions (CTEs)
+## Common Table Expressions (CTEs), WITH
 
 En CTE (Common Table Expression) er en midlertidig, navngitt resultattabell som defineres med `WITH`-nøkkelordet. CTEs gjør komplekse spørringer mer lesbare ved å dele dem opp i logiske steg.
 
@@ -547,6 +552,155 @@ SELECT * FROM kategorier_hierarki ORDER BY nivaa;
 (SELECT kategori_id, navn, forelder_id, 1 AS nivaa FROM kategorier WHERE forelder_id IS NULL) UNION ALL (SELECT k.kategori_id, k.navn, k.forelder_id, kh.nivaa + 1 FROM kategorier k JOIN (SELECT kategori_id, navn, forelder_id, 1 AS nivaa FROM kategorier WHERE forelder_id IS NULL) as kh ON k.forelder_id = kh.kategori_id);
 ```
 
+## ROLLUP vs. CUBE: Super-aggregering i SQL
+
+Både `ROLLUP` og `CUBE` er utvidelser til `GROUP BY`-klausulen som lar deg generere subtotaler på flere nivåer i én enkelt spørring. Dette er ekstremt nyttig for rapportering og dataanalyse.
+
+### Testdata
+
+Vi bruker en enkel salgstabell for å illustrere:
+
+| region | land | produkt | antall |
+|---|---|---|---|
+| Europa | Norge | Sykkel | 10 |
+| Europa | Norge | Ski | 150 |
+| Europa | Sverige | Sykkel | 5 |
+| Europa | Sverige | Ski | 200 |
+| Asia | Japan | Sykkel | 20 |
+| Asia | Japan | Ski | 50 |
+| Asia | Sør-Korea | Sykkel | 30 |
+| Asia | Sør-Korea | Ski | 80 |
+
+```sql
+-- 1. Oppsett: Tabell og Testdata
+-- Vi lager en enkel salgstabell for å illustrere konseptene.
+
+DROP TABLE IF EXISTS salg;
+CREATE TABLE salg (
+    region VARCHAR(50),
+    land VARCHAR(50),
+    produkt VARCHAR(50),
+    antall INTEGER
+);
+
+INSERT INTO salg (region, land, produkt, antall) VALUES
+('Europa', 'Norge', 'Sykkel', 10),
+('Europa', 'Norge', 'Ski', 150),
+('Europa', 'Sverige', 'Sykkel', 5),
+('Europa', 'Sverige', 'Ski', 200),
+('Asia', 'Japan', 'Sykkel', 20),
+('Asia', 'Japan', 'Ski', 50),
+('Asia', 'Sør-Korea', 'Sykkel', 30),
+('Asia', 'Sør-Korea', 'Ski', 80);
+```
+
+--- 
+
+### 1. Standard `GROUP BY`
+
+En standard `GROUP BY region, land, produkt` gir deg kun de mest detaljerte subtotalene:
+
+```sql
+SELECT region, land, produkt, SUM(antall) AS totalt_antall
+FROM salg
+GROUP BY region, land, produkt;
+```
+
+**Resultat (4 rader):**
+- Sum for (Europa, Norge, Sykkel)
+- Sum for (Europa, Norge, Ski)
+- Sum for (Europa, Sverige, Sykkel)
+- ...og så videre.
+
+--- 
+
+### 2. `GROUP BY ROLLUP(region, land, produkt)`
+
+`ROLLUP` antar et **hierarki** basert på rekkefølgen i `ROLLUP`-klausulen. Den genererer subtotaler ved å "rulle opp" fra høyre mot venstre.
+
+**Hierarki:** `produkt` → `land` → `region`
+
+**Spørring:**
+```sql
+SELECT region, land, produkt, SUM(antall) AS totalt_antall
+FROM salg
+GROUP BY ROLLUP(region, land, produkt);
+```
+
+**Resultat (9 rader):**
+
+`ROLLUP` genererer subtotaler for:
+1.  `(region, land, produkt)` - Detaljert nivå (som standard `GROUP BY`)
+2.  `(region, land)` - Subtotal per land
+3.  `(region)` - Subtotal per region
+4.  `()` - Grand total (totalsum for alt)
+
+| region | land | produkt | totalt_antall |
+|---|---|---|---|
+| Asia | Japan | Ski | 50 |
+| Asia | Japan | Sykkel | 20 |
+| Asia | Japan | NULL | **70** (Subtotal for Japan) |
+| Asia | Sør-Korea | Ski | 80 |
+| Asia | Sør-Korea | Sykkel | 30 |
+| Asia | Sør-Korea | NULL | **110** (Subtotal for Sør-Korea) |
+| Asia | NULL | NULL | **180** (Subtotal for Asia) |
+| ... | ... | ... | ... |
+| NULL | NULL | NULL | **545** (Grand Total) |
+
+> **Huskeregel:** `ROLLUP` er for hierarkisk oppsummering, som en drill-down rapport.
+
+--- 
+
+### 3. `GROUP BY CUBE(region, land, produkt)`
+
+`CUBE` genererer subtotaler for **alle mulige kombinasjoner** av kolonnene i `CUBE`-klausulen. Den antar ikke noe hierarki.
+
+**Spørring:**
+```sql
+SELECT region, land, produkt, SUM(antall) AS totalt_antall
+FROM salg
+GROUP BY CUBE(region, land, produkt);
+```
+
+**Resultat (16 rader):**
+
+`CUBE` genererer subtotaler for:
+- `(region, land, produkt)`
+- `(region, land)`
+- `(region, produkt)`
+- `(land, produkt)`
+- `(region)`
+- `(land)`
+- `(produkt)`
+- `()` (Grand total)
+
+I tillegg til alt `ROLLUP` gir, får du også kombinasjoner som ikke er hierarkiske:
+
+| region | land | produkt | totalt_antall |
+|---|---|---|---|
+| ... | ... | ... | ... |
+| Asia | NULL | Ski | **130** (Sum ski i Asia) |
+| Asia | NULL | Sykkel | **50** (Sum sykkel i Asia) |
+| Europa | NULL | Ski | **350** (Sum ski i Europa) |
+| Europa | NULL | Sykkel | **15** (Sum sykkel i Europa) |
+| NULL | Japan | NULL | **70** (Sum for Japan, uavhengig av region) |
+| NULL | NULL | Ski | **480** (Totalsum for ski) |
+| NULL | NULL | Sykkel | **65** (Totalsum for sykkel) |
+| ... | ... | ... | ... |
+
+> **Huskeregel:** `CUBE` er for flerdimensjonal analyse, som en pivottabell i Excel.
+
+--- 
+
+### Oppsummering
+
+| Funksjon | Formål | Antall grupperinger (for N kolonner) |
+|---|---|---|
+| `ROLLUP` | Hierarkisk oppsummering | N + 1 |
+| `CUBE` | Alle kombinasjoner | 2^N |
+
+Bruk `ROLLUP` når du har et klart hierarki (f.eks. År → Måned → Dag). Bruk `CUBE` når du vil analysere data på tvers av uavhengige dimensjoner (f.eks. Region, Produkt, Kundeske Produkt, Kundesegment).
+
 ## Diverse
 ### Liste ut alle triggere i en database
 
@@ -569,3 +723,71 @@ WHERE
 
 ### Liste ut alle funksjoner (og prosedurer)
 `\df` 
+
+### Hva er en pivottabell?
+
+En **pivottabell** er et kraftig verktøy i regneark (som Excel og Google Sheets) som lar deg omorganisere, gruppere og summere data fra en stor tabell for å lage en mer oversiktlig rapport. Du kan "pivotere" (snu) dataene for å se dem fra ulike vinkler uten å endre selve rådataene.
+
+Tenk på det som å bygge en interaktiv rapport fra en flat liste med data.
+
+#### De fire hovedkomponentene
+
+En pivottabell består av fire hovedområder du kan dra datafeltene dine til:
+
+1.  **Rader (Rows):** Kategoriene du vil gruppere dataene dine etter, vist nedover på venstre side. *Eksempel: `Region` og `Land`.*
+2.  **Kolonner (Columns):** Kategoriene du vil sammenligne på tvers av, vist bortover på toppen. *Eksempel: `Produkt`.*
+3.  **Verdier (Values):** Tallfeltet du vil aggregere (summere, telle, finne gjennomsnitt av, etc.). *Eksempel: `SUM(Antall)`.*
+4.  **Filtre (Filters):** Lar deg filtrere hele rapporten basert på ett eller flere felt. *Eksempel: Filtrer på `År`.*
+
+#### Eksempel: Fra rådata til pivottabell
+
+Se regnearket `pivot-rollup-cube-eksempel.xlsx` for en praktisk demonstrasjon.
+
+**1. Rådata (lang liste):**
+
+| region | land | produkt | antall |
+|---|---|---|---|
+| Europa | Norge | Sykkel | 10 |
+| Europa | Norge | Ski | 150 |
+| ... | ... | ... | ... |
+
+**2. Pivottabell (kompakt rapport):**
+
+Her har vi dratt:
+- `Region` og `Land` til **Rader**
+- `Produkt` til **Kolonner**
+- `Antall` til **Verdier** (med SUM)
+
+| | **Produkt** | |
+|---|---|---|
+| **Region** / **Land** | **Sykkel** | **Ski** |
+| ▼ Europa | | |
+| &nbsp;&nbsp;&nbsp;&nbsp;Norge | 10 | 150 |
+| &nbsp;&nbsp;&nbsp;&nbsp;Sverige | 5 | 200 |
+| **Europa Subtotal** | **15** | **350** |
+| ▼ Asia | | |
+| &nbsp;&nbsp;&nbsp;&nbsp;Japan | 20 | 50 |
+| &nbsp;&nbsp;&nbsp;&nbsp;Sør-Korea | 30 | 80 |
+| **Asia Subtotal** | **50** | **130** |
+| **Grand Total** | **65** | **480** |
+
+
+### Koblingen til SQL: `CUBE` er en pivottabell
+
+En pivottabell er den visuelle representasjonen av det SQL `CUBE` gjør!
+
+-   **`GROUP BY CUBE(region, land, produkt)`** genererer *alle* subtotalene du ser i en pivottabell, inkludert:
+    -   Subtotal per region (f.eks. "Europa Subtotal")
+    -   Subtotal per produkt (f.eks. "Grand Total" for Sykkel)
+    -   Grand Total for alt
+
+-   **`ROLLUP(region, land, produkt)`** er som en *begrenset* pivottabell som kun gir deg subtotaler langs ett hierarki (radene), men ikke på tvers av kolonnene.
+
+| Pivottabell-element | Tilsvarer i SQL `CUBE` |
+|---|---|
+| Rader (Region, Land) | `GROUP BY region, land` |
+| Kolonner (Produkt) | `GROUP BY produkt` |
+| Subtotaler | `GROUP BY region`, `GROUP BY land`, etc. |
+| Grand Total | `GROUP BY ()` (tom gruppering) |
+
+**Konklusjon:** Å forstå pivottabeller gir deg en intuitiv forståelse av hva `CUBE` og `ROLLUP` gjør i SQL. Begge verktøyene løser samme problem: å transformere detaljerte data til en oppsummert rapport med subtotaler på flere nivåer.
