@@ -125,14 +125,17 @@ read_item(Y)
   - Hvis en transaksjon gjennomfører en beregning (agreggering med funksjoner som COUNT, AVG, SUM, MIN, MAX) basert på flere databaseelementer mens andre transaksjoner oppdaterer noen av disse databaseelementene, agreggeringsfunksjonen kan ta i betraktning noen av verdiene før de ble oppdatert og noen etter at de ble oppdatert.
 - **Nonrepeatable read** 
   - T1 leser en verdi fra en tabell. Hvis en annen transaksjon T2 senere oppdaterer denne verdien og T1 leser denne verdien på nytt, vil T1 "se" den siste verdien, som er forskjellig fra den første.
+  - For eksempel, under flybestilling en kunde sjekker tilgjengelighet av ledige plasser på flere flighter før kunden bestemmer for en flight, kan antall ledige plasser være endret når kunden bestemmer seg for en flight, dvs. når transaksjonen leser antall ledige seter andre gangen. 
 
-- Isolasjonsnivåer spesifiserer hvordan er transaksjoner isolert fra hverandre basert på diverse feil / konflikter som kan oppstå med overlappende transaksjoner (dvs. når to eller flere transaksjoner gjennomføres i samme tidsrom og leser / skriver til de samme databaseelementene i databasen). 
+- **Isolasjonsnivåer** spesifiserer hvordan transaksjoner er isolert fra hverandre basert på diverse feil / konflikter som kan oppstå med overlappende transaksjoner (dvs. når to eller flere transaksjoner gjennomføres i samme tidsrom og leser / skriver til de samme databaseelementene i databasen). 
   - READ UCOMMITED (anomalier som "dirty read", "unrepeatable read" og "phantom record" kan alle inntreffe)
   - READ COMMITTED ("dirty read" er utelukket)
   - REPEATABLE READ ("dirty read" og "unrepeatable read" er utelukket)
   - SERIALIZABLE (garanterer at ingen av anomaliene kan inntreffe)
 - OBS! Databaseadministrator og database programmerer kan bruke isolasjonsnivåer for å finjustere transaksjonsytelse ved å, for eksempel, ikke kreve serialiserbarhet.
 - Man bruker også et begret "snapshot isolation", hvor en transaksjon kun ser verdier som var i databasen ("commited") når transaksjonen startet, dvs. transaksjon jobber på en "snapshot" av databasen på oppstartstidspunktet.
+
+... fortsettelsen kommer 2026-04-15 ...
 
 
 
