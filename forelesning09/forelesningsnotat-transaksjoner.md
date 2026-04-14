@@ -54,7 +54,7 @@ read_item(X);
 X := X + M;
 write_item(X);
 ```
-- Det er flere problemer som kan oppstå hvis T1 og T2 overlapper (f. eks. **lost update**, **dirty read**, **ukorrekt summering**, **nonrepeatable read**).
+- Det er flere problemer som kan oppstå hvis T1 og T2 overlapper (f. eks. **lost update**, **dirty read**, **ukorrekt summering/inconsistent read**, **nonrepeatable read**, **phantom read**).
 - **lost update** problem:
   - Problemet oppstår når to transaksjoner som aksesserer de samme dataelementene i en database har operasjoner som overlapper på en måte som resulterer at verdier til noen databaseelementer er ukorrekte.
   - La oss anta at T1 og T2 blir utført i samme tidsperioden på følgende måte:
@@ -121,21 +121,122 @@ write_item(X);
 read_item(Y)
 ...
 ``` 
-- **Problem med ukorrekt summering** ("phantom record"?)
+- **Problem med ukorrekt summering** ("inconsistent read", må eventuelt låse store områder)
   - Hvis en transaksjon gjennomfører en beregning (agreggering med funksjoner som COUNT, AVG, SUM, MIN, MAX) basert på flere databaseelementer mens andre transaksjoner oppdaterer noen av disse databaseelementene, agreggeringsfunksjonen kan ta i betraktning noen av verdiene før de ble oppdatert og noen etter at de ble oppdatert.
-- **Nonrepeatable read** 
+  - Eksempel: Ane kjører en rapport som summerer saldoene på alle kontoer. Bjørn overfører 5 000 kr fra konto 1920 til konto 2400 mens Anes spørring leser radene.
+```
+Kontoer i databasen:
+  1920 Bankinnskudd    10 000 kr
+  2400 Leverandørgjeld  8 000 kr
+  Total korrekt:       18 000 kr
+
+Tid   Transaksjon A (Ane — SUM)        Transaksjon B (Bjørn — overføring)
+────  ──────────────────────────────   ──────────────────────────────────
+T1    BEGIN
+T2    LES konto 1920 → 10 000          BEGIN
+T3                                     UPDATE 1920: 10 000 → 5 000
+                                       UPDATE 2400:  8 000 → 13 000
+                                       COMMIT
+T4    LES konto 2400 → 13 000
+      (leser den oppdaterte verdien)
+T5    SUM = 10 000 + 13 000 = 23 000
+T6    COMMIT
+
+Korrekt svar:  18 000 kr  (før overføring)
+               18 000 kr  (etter overføring — summen er uendret)
+Feil svar:     23 000 kr  (blanding av før og etter)
+```
+
+- **Non-repeatable read** 
   - T1 leser en verdi fra en tabell. Hvis en annen transaksjon T2 senere oppdaterer denne verdien og T1 leser denne verdien på nytt, vil T1 "se" den siste verdien, som er forskjellig fra den første.
   - For eksempel, under flybestilling en kunde sjekker tilgjengelighet av ledige plasser på flere flighter før kunden bestemmer for en flight, kan antall ledige plasser være endret når kunden bestemmer seg for en flight, dvs. når transaksjonen leser antall ledige seter andre gangen. 
+- **Phantom read**
+  - Phantom read handler om at nye rader dukker opp (eller forsvinner) mellom to kjøringer av samme spørring.
 
-- **Isolasjonsnivåer** spesifiserer hvordan transaksjoner er isolert fra hverandre basert på diverse feil / konflikter som kan oppstå med overlappende transaksjoner (dvs. når to eller flere transaksjoner gjennomføres i samme tidsrom og leser / skriver til de samme databaseelementene i databasen). 
-  - READ UCOMMITED (anomalier som "dirty read", "unrepeatable read" og "phantom record" kan alle inntreffe)
+
+| Fenomen                 | Hva som er ustabilt                                               | Antall rader endres?              | Verdier endres?                              |
+| ----------------------- | ----------------------------------------------------------------- | --------------------------------- | -------------------------------------------- |
+| **Phantom Read**        | *Mengden* av rader som matcher en WHERE-betingelse                | **Ja** — rader legges til/slettes | Nei (eksisterende rader uendret)             |
+| **Non-repeatable Read** | Verdien av *én bestemt rad* lest to ganger                        | Nei                               | **Ja** — én rad er oppdatert                 |
+| **Inconsistent Read**   | *Kombinasjonen* av verdier på tvers av flere rader lest *én gang* | Nei                               | **Ja** — ulike rader lest på ulike tidspunkt |
+
+- **Isolasjonsnivåer** spesifiserer hvordan transaksjoner er isolert fra hverandre basert på diverse feil / konflikter som kan oppstå med overlappende transaksjoner (dvs. når to eller flere transaksjoner gjennomføres i samme tidsrom og leser / skriver de samme databaseelementene i databasen). 
+  - READ UCOMMITED (anomalier som "dirty read", "nonrepeatable read" og "phantom record" kan alle inntreffe)
   - READ COMMITTED ("dirty read" er utelukket)
   - REPEATABLE READ ("dirty read" og "unrepeatable read" er utelukket)
   - SERIALIZABLE (garanterer at ingen av anomaliene kan inntreffe)
 - OBS! Databaseadministrator og database programmerer kan bruke isolasjonsnivåer for å finjustere transaksjonsytelse ved å, for eksempel, ikke kreve serialiserbarhet.
 - Man bruker også et begret "snapshot isolation", hvor en transaksjon kun ser verdier som var i databasen ("commited") når transaksjonen startet, dvs. transaksjon jobber på en "snapshot" av databasen på oppstartstidspunktet.
+- PostgreSQL har en implementert mekanisme for "shapshot isolation" som heter Multi-Version Concurrancy Control (MVCC). 
 
 ... fortsettelsen kommer 2026-04-15 ...
+
+- **Mer om MVCC**
+
+Moderne databasehåndteringssystemer har innebygde mekanismer for behandling av samtidige oppdateringer og lesinger. PostgreSQL har en mekanisme kalt Multi-Version Concurrency Control som håndterer samtidige lesere og skrivere uten låsing. Låsing betyr at man ikke tillater noen prosesser å fullføre før en annen prosess, som trenger samme ressursen har avsluttet. Låsing kan, blant annet, gi ytelses- og vranglås-problemer. 
+
+> Når en verdi skal endres, ikke overskriv den på stedet (disk) - skriv den nye verdien et nytt sted, og la den gamle stå inntil ingen lenger trenger den (eller "for alltid").
+
+Dette ligner på mekanismen implementert i versjonskotrollsystemet `git`. 
+
+| Aspekt             | Git                                | PostgreSQL MVCC                                             |
+| ------------------ | ---------------------------------- | ----------------------------------------------------------- |
+| **Enhet**          | Filer og commits                   | Individuelle databaserader                                  |
+| **Formål**         | Historikk, samarbeid, branching    | Samtidige transaksjoner uten låsing                         |
+| **Tidslinje**      | Permanent — historikk beholdes     | Midlertidig — gamle versjoner slettes når ingen trenger dem |
+| **Merge-strategi** | Manuell (du løser konflikter selv) | Automatisk (databasen avviser eller velger)                 |
+| **Branching**      | Eksplisitt og langvarig            | Implisitt og kortvarig (én transaksjon)                     |
+
+MVCC kan sees også i forhold til isolasjonsnivåer. 
+
+| Isolasjonsnivå            | MVCC-snapshot?                         | Beskytter mot Inconsistent Read?                    |
+| ------------------------- | -------------------------------------- | --------------------------------------------------- |
+| Read Committed (standard) | **Delvis** — nytt snapshot per setning | **Nei** — hver `SELECT` ser siste committed versjon |
+| Repeatable Read           | **Ja** — ett snapshot per transaksjon  | **Ja**                                              |
+| Serializable              | **Ja** + ekstra sjekker                | **Ja**                                              |
+
+Man trenger ikke å bruke de strengeste isolasjonsnivåene. MVCC gir det beste fra begge verdener:
+- Høy parallellitet: Lesere blokkerer ikke skrivere, og skrivere blokkerer ikke lesere.
+- Konsistens: Hver transaksjon ser et konsistent øyeblikksbilde av databasen fra det tidspunktet den startet.
+
+Kostnaden er lagringsplass (gamle versjoner må beholdes til ingen transaksjon trenger dem lenger) og vedlikehold (VACUUM i PostgreSQL rydder opp døde versjoner). Men dette er en langt billigere kostnad enn å serialisere alle transaksjoner.
+
+Oppbygging etter feil er implementert forskjellig i de forskjellige databasehåndteringssystemer, men det er noen hovedprinsipper som er oppsummert her:
+
+| Begrep       | Hva det er                           | Hvem utfører det                     | Når                                       |
+| ------------ | ------------------------------------ | ------------------------------------ | ----------------------------------------- |
+| **REDO**     | Anvend en WAL-oppføring på datafilen | PostgreSQL automatisk                | Ved oppstart etter krasj                  |
+| **UNDO**     | Marker en transaksjon som abortert   | PostgreSQL automatisk (via pg\_xact) | Ved oppstart / lazy ved første tilgang    |
+| **ROLLBACK** | SQL-kommando du skriver selv         | Deg som bruker                       | Når du vil avbryte en transaksjon manuelt |
+| **WAL**      | Loggen som gjør REDO mulig           | PostgreSQL skriver, du leser ikke    | Kontinuerlig under drift                  |
+
+- **REDO** betyr: ta en endring som er registrert i WAL-loggen, og anvend den på datafilen på disk. Dette brukes når databasen krasjet etter at en transaksjon ble committed, men før de endrede sidene (pages) ble skrevet fra RAM til disk. WAL-loggen er skrevet til disk (det er garantien ved COMMIT), men datafilen er ikke oppdatert ennå.
+- **UNDO** betyr: ta en endring som er registrert i WAL-loggen, og reverser den i datafilen.
+Dette brukes når databasen krasjet midt i en transaksjon som aldri ble committed. Noen av endringene kan allerede ha blitt skrevet til disk (PostgreSQL skriver dirty pages til disk løpende for å frigjøre RAM), men transaksjonen er ikke ferdig.
+
+- Når Postgresql starter etter en krasj/feil, følgende skjer:
+1. ANALYSE:   Les WAL fra siste checkpoint. Finn hvilke transaksjoner som er committed og hvilke som ikke er det.
+
+2. REDO-fase: Spill av alle WAL-oppføringer fra checkpointet frem til krasjet. Dette bringer datafilen til den tilstanden den hadde rett før krasjet
+— inkludert uncommitted endringer som tilfeldigvis var skrevet til disk.
+
+3. UNDO-fase: Marker alle transaksjoner uten COMMIT som aborterte i pg_xact. (I PostgreSQL skjer dette "lazy" — ikke ved oppstart, men første gang en annen transaksjon møter en slik rad og sjekker dens synlighet.)
+
+> Det er verden av spennende løsninger i DBHS, som er blitt utviklet under mange iterasjoner med prøving og feiling over flere tiår, slik mange DBHS tilfredstiller ACID i rimelige stor grad og kan brukes for de fleste behov.
+
+
+## Video
+https://www.youtube.com/watch?v=RlM9AfWf1WU (concurrency and parallelism)
+
+Parallellismen er relatert til `serialiserbarhet` (hva er en `seriell` oppgave?). 
+
+
+
+
+
+
+
+
 
 
 
