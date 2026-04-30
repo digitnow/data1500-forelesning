@@ -87,9 +87,10 @@ Tester forståelsen av typer forhold mellom entiteter:
 10. Illustrer med symboler Crow's Foot-notasjonen for relasjon mellom Turneringer og Løp i Model B (E-sport).
 
 Relasjoner noteres på følgende måte:
-|Notasjon|Betydning|
+|Notasjon|Betydning|Eksempel|
 |--|--|
-|`\|\|`| nøyaktig èn|
+|`\|\|`| nøyaktig èn| `Sykler -\|\|--o{ Utleier`|
+|`-o{`| ingen eller mange| `Sykler -\|\|--o{ Utleier`|
 
 
 
