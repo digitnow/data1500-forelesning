@@ -89,7 +89,7 @@ Tester forståelsen av typer forhold mellom entiteter:
 Relasjoner noteres på følgende måte:
 |Notasjon|Betydning|
 |--|--|
-|`||`| nøyaktig èn|
+|`\|\|`| nøyaktig èn|
 
 
 
