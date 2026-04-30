@@ -88,7 +88,7 @@ Tester forståelsen av typer forhold mellom entiteter:
 
 Relasjoner noteres på følgende måte:
 |Notasjon|Betydning|Eksempel|Beskrivelse|
-|--|--|
+|--|--|--|--|
 |`\|\|`| nøyaktig èn| `Sykler -\|\|--o{ Utleier`| èn utleie/tur har **nøyaktig èn** sykkel|
 |`-o{`| ingen eller mange| `Sykler -\|\|--o{ Utleier`| èn sykkel kan brukes i **ingen eller mange** utleier på ikke overlappende tidperioder|
 
