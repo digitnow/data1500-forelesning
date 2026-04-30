@@ -87,10 +87,18 @@ Tester forståelsen av typer forhold mellom entiteter:
 10. Illustrer med symboler Crow's Foot-notasjonen for relasjon mellom Turneringer og Løp i Model B (E-sport).
 
 Relasjoner noteres på følgende måte:
-|Notasjon|Betydning|Eksempel|Beskrivelse|
+|Kardinalitet|Betydning|Eksempel|Beskrivelse|
 |--|--|--|--|
 |`\|\|`| nøyaktig èn| `Sykler -\|\|--o{ Utleier`| èn utleie/tur har **nøyaktig èn** sykkel|
-|`-o{`| ingen eller mange| `Sykler -\|\|--o{ Utleier`| èn sykkel kan brukes i **ingen eller mange** utleier på ikke overlappende tidperioder|
+|`-o{`| ingen eller mange| `Sykler -\|\|--o{ Utleier`| èn sykkel kan brukes i **ingen eller mange** utleier (på ikke overlappende tidsperioder)|
+|`-|{`| en eller mange| `Ansatte }|--o{ Prosjekter`| en ansatt kan delta i **ingen eller mange** prosjekter og et prosjekt skal ha **en eller mange** ansatte (problematisk å implementere)|
+
+Unicode tegn som er brukt i notasjonen er:
+- `|` vertical line, U+007C
+- `o` latin small letter o, U+006F
+- `{` left curly bracket {, U+007B
+- `}` right curly bracket }, U+007D
+- `-` Hyphen-Minus -, U+002D
 
 
 
