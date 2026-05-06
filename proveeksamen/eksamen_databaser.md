@@ -74,7 +74,7 @@ Bedriften ønsker å utvide systemet for å håndtere **Valutakurser** og **Valu
 **a) ER-diagram (8 %)**
 Noter et Entity-Relationship (ER) diagram (Crow's Foot, tekstuelt, se om notasjon under) som modellerer denne utvidelsen. Diagrammet må inkludere de nye entitetene (`Valutakurser`, `Valutahandler`), den eksisterende entiteten (`Valutaer`), alle relevante attributter, primærnøkler (PK), fremmednøkler (FK), og relasjonene mellom dem med korrekt kardinalitet.
 
-### Om notasjon (uten tegning, tekstuelt)
+### Om notasjon (uten tegning, tekstuelt) Kommer i vedlegg på eksamen
 
 **Eksempler**
 
@@ -95,7 +95,12 @@ Kinosal (kino_navn (PK,FK), kinosal_nr (PK), antall_plasser)
 ```
 
 - `..` **ikke-identifiserende** (fremmednøkkel er ikke en del av primærnøkkelen og den kan være NULL)
-  - eksempel: `Sykler -\|\|..o{ Utleier` (fremmednøkkelen i Utleier mot Sykler er ikke en del av primærnøkkelen til Utleier)
+  - eksempel: `Sykler -\|\|..o{ Utleier` (fremmednøkkelen i Utleier mot Sykler er ikke en del av primærnøkkelen til Utleier) i følgende modell:
+
+``` 
+Sykler (sykkel_id (PK), status, sist_vedlikeholdt)
+Utleier/Turer (tur_id (PK), sykkel_id, bruker_id, start_stasjon, slutt_stasjon, start_tid, slutt_tid, pris)
+``` 
 
 
 Unicode tegn som brukes i notasjonen
