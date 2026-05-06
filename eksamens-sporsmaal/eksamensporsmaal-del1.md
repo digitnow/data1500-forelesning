@@ -1,12 +1,12 @@
-# DataModelllering
+# Øvingssett for eksamen i DATA1500 våren 2026 (del 1, 50 spørsmål)
 
-Konseptuell og logisk dataModelllering basert på Modelller fra tre ulike domener for å gi en bredde i Modellleringstrening. 
+Konseptuell og logisk datamodellering basert på Modelller fra tre ulike domener for å gi en bredde i modelleringstrening. 
 
 ## Modelllbeskrivelse (tre domener)
 
 Modelllene er definert med et tabellnavn med stor forbokstav og i flertall (Sykler, Stasjoner osv.), og med kolonnenavn (attributter) med "snake_case"-notasjon og små bokstaver. Ingen primær- eller fremmednøkler er markert.
 
-### Modelll A: Bysykkel-utleie
+### Modell A: Bysykkel-utleie
 ``` 
 Sykler (sykkel_id, status, sist_vedlikeholdt)
 Stasjoner (stasjon_id, navn, kapasitet, lat, lon)
@@ -14,7 +14,7 @@ Brukere (bruker_id, navn, telefon, betalingsmetode)
 Utleier/Turer (tur_id, sykkel_id, bruker_id, start_stasjon, slutt_stasjon, start_tid, slutt_tid, pris)
 ``` 
 
-### Modelll B: E-sport / Dataspill (Racing)
+### Modell B: E-sport / Dataspill (Racing)
 ```
 Spillere (spiller_id, brukernavn, region, rank)
 Turneringer (turnering_id, navn, start_dato, premiepott)
@@ -23,7 +23,7 @@ Deltakelser (spiller_id, lop_id, plasseringer, beste_rundetid)
 Telemetri (NoSQL/Tidsserier): Fart, posisjon (x,y,z), dekkslitasje per millisekund
 ``` 
 
-### Modelll C: Bedrift og Prosjektstyring
+### Modell C: Bedrift og Prosjektstyring
 ``` 
 Ansatte (ansatt_id, navn, avdeling_id, ansettelsesdato)
 Avdelinger (avdeling_id, navn, leder_id)
@@ -33,18 +33,18 @@ Prosjektdeltakelse (ansatt_id, prosjekt_id, rolle, timer_allokert)
 
 ## Oppgaver
 
-### Konseptuell Modelllering og Entiteter
+### Konseptuell Modellering og Entiteter
 
-Konseptuell Modelllering innebærer 
+Konseptuell Modellering innebærer 
 - å finne begreper og navn, som brukes for entitetene (eller objektene) i en dataModelll,
 - å bruke diagrammer (ER og/eller UML),
 - å angi nøkkelattributter, relasjonstyper (1:1, 1:N, N:M) og kardinalitet (eksempel: en Sykkel kan ha ingen eller mange Utleier/Turer, en Tur kan ha nøyaktig en sykkel),
 - å inkludere forretningsregler og identitetsbegrensninger (unikhet, påkrevde verdier),
 - å forklare normalisering for skape et grunnlag for en "fysisk" Modelll.
 
-OBS! Når det blir spurt om å gi eksempler fra en spesifikk Modelll, betyr det ikke at all nødvendig informasjon er gitt i Modelllbeskrivelsene. Det forventes at studentene foreslår entiteter, attributter, forhold osv. som er nødvendig for å besvare spørsmål.  
+OBS! Når det blir spurt om å gi eksempler fra en spesifikk Modelll, betyr det ikke at all nødvendig informasjon er gitt i modellbeskrivelsene. Det forventes at studentene selv foreslår entiteter, attributter, forhold osv. som er nødvendig for å besvare spørsmål.  
 
-1. I Modell C (Bedrift), hvordan vil du Modelllere at en ansatt kan ha flere telefonnumre?
+1. I Modell C (Bedrift), hvordan vil du modellere at en ansatt kan ha flere telefonnumre?
 
 Tester forståelsen av normalisering, fordeler og ulemper av flerverdiattributter og spesielle objekttyper (eksempel: ARRAY i PostgreSQL). 
 
@@ -58,7 +58,7 @@ Tester forståelsen av assosiative entiteter (koblingstabeller).
 
 4. Hvordan Modelllerer man en rekursiv (selv-reflekterende) relasjon? Gi et eksempel på hvordan dette kan brukes i Modell C (Bedrift) for å vise hvem som er sjefen til hvem.
 
-Tester forståelse av Modelllering av hierarkiske strukturer i en tabell (relasjonsModelllen).
+Tester forståelse av modellering av hierarkiske strukturer i en tabell (relasjonsModelllen).
 
 5. Hva er en sammensatt attributt (composite attribute)? Gi et eksempel på hvordan adresse kunne vært Modelllert som dette for en Bruker i Modelll A (Bysykkel).
 
@@ -66,7 +66,7 @@ Tester forståelse av sammensatte attributter. Sammensatte attributter bryter me
 
 6. Hva er forskjellen på en sterk og en svak entitet? Gi eksempel fra Modelll A (Bysykkel).
 
-Tester forståelsen av Modellleringsdetaljer som gjelder avhengighetsforhold mellom entiteter. 
+Tester forståelsen av modelleringsdetaljer som gjelder avhengighetsforhold mellom entiteter. 
 
 ### Relasjoner og Kardinalitet
 
@@ -169,7 +169,7 @@ Mye av dette kan løses ved å bruke en surrogatnøkkel, som da er både supern�
 
 Tester forståelsen av bruken av fremmednøkler for å tilfredsstille spesifikke krav.
 
-### Avansert Modelllering og historikk
+### Avansert Modellering og historikk
 
 19. Bysykkel-selskapet (Modell A) ønsker å spore historikken til sykkelens status (f.eks. når den gikk fra "Aktiv" til "På verksted"). Hvordan må Modelllen utvides for å støtte dette?
 
