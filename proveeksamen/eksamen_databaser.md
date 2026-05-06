@@ -1,5 +1,7 @@
 # Prøveeksamen i Databaser våren 2026
+
 **Tid:** 3 timer
+
 **Hjelpemidler:** Ingen
 
 ## Introduksjon til datamodellen
@@ -8,30 +10,34 @@ Denne eksamenen tar utgangspunkt i en forenklet versjon av NS 4102-modellen for 
 Følgende tabeller er relevante for oppgavene:
 
 **Kontoer**
-- `guid` (CHAR(32), Primærnøkkel)
+- `guid` (CHAR(32), PK)
 - `kontonummer` (INTEGER, Unik)
 - `navn` (TEXT)
-- `overordnet_guid` (CHAR(32), Fremmednøkkel til Kontoer.guid)
+- `overordnet_guid` (CHAR(32), FK til Kontoer.guid)
 - `mva_pliktig` (BOOLEAN)
 
 **Transaksjoner**
-- `guid` (CHAR(32), Primærnøkkel)
+- `guid` (CHAR(32), PK)
 - `bilagsnummer` (TEXT)
 - `posteringsdato` (DATE)
 - `beskrivelse` (TEXT)
 
 **Posteringer**
-- `guid` (CHAR(32), Primærnøkkel)
-- `transaksjon_guid` (CHAR(32), Fremmednøkkel til Transaksjoner.guid)
-- `konto_guid` (CHAR(32), Fremmednøkkel til Kontoer.guid)
+- `guid` (CHAR(32), PK)
+- `transaksjon_guid` (CHAR(32), FK til Transaksjoner.guid)
+- `konto_guid` (CHAR(32), FK til Kontoer.guid)
 - `belop_teller` (BIGINT)
 - `belop_nevner` (BIGINT)
 
 **Valutaer**
-- `kode` (CHAR(3), Primærnøkkel, f.eks. 'NOK', 'USD', 'EUR')
+- `kode` (CHAR(3), PK, f.eks. 'NOK', 'USD', 'EUR')
 - `navn` (TEXT)
 
 *Merk: Beløp lagres som en brøk for å unngå avrundingsfeil. Den faktiske verdien er `belop_teller / belop_nevner`.*
+
+*FK - Fremmednøkkel*
+
+*PK - Primærnøkkel*
 
 ---
 
@@ -48,11 +54,11 @@ Skriv en SQL-spørring som lister ut `bilagsnummer`, `posteringsdato` og `beskri
 **c) Aggregering og JOIN (7 %)**
 Skriv en SQL-spørring som beregner den totale saldoen for hver konto. Resultatet skal inneholde `kontonummer`, `navn` og `saldo`. Saldoen beregnes som summen av `(belop_teller / belop_nevner)` for alle posteringer knyttet til kontoen. Kontoer uten posteringer trenger ikke å være med i resultatet.
 
-**b) Aggregering med NULL-håndtering (7 %)** (fra B)
+**b) Aggregering med NULL-håndtering (7 %)**
 Skriv en SQL-spørring som beregner antall underkontoer for hver hovedkonto. Resultatet skal vise `kontonummer` og `navn` for hovedkontoen, samt antallet direkte underkontoer (`antall_underkontoer`). Hovedkontoer er definert som kontoer der `overordnet_guid` er NULL. Kontoer som ikke har noen underkontoer skal også være med i resultatet (med antall 0).
 
 **e) Rekursiv CTE (13 %)**
-Kontoplanen er hierarkisk bygget opp, der `overordnet_guid` peker på foreldrekontoen. Skriv en rekursiv CTE (`WITH RECURSIVE`) som finner alle underkontoer (i alle ledd nedover) for kontoen med kontonummer `3000`. Resultatet skal inkludere `kontonummer`, `navn` og hvilket `nivaa` (dybde) kontoen befinner seg på i forhold til konto 3000 (der konto 3000 er nivå 0).
+Kontoplanen er hierarkisk bygget opp, der `overordnet_guid` peker på foreldrekontoen. Skriv en rekursiv CTE (`WITH RECURSIVE`) som finner alle underkontoer (i alle ledd nedover) for kontoen med kontonummer `3000`. Resultatet skal inkludere `kontonummer`, `navn` og hvilket `nivaa` (dybde) kontoen befinner seg på i forhold til konto 3000 (for konto 3000 er nivå 0).
 
 ---
 
@@ -74,9 +80,23 @@ Noter et Entity-Relationship (ER) diagram (Crow's Foot, tekstuelt, se om notasjo
 
 |Kardinalitet|Betydning|Eksempel|Beskrivelse|
 |--|--|--|--|
-|`\|\|`| nøyaktig én| `Sykler -\|\|--o{ Utleier`| én utleie/tur har **nøyaktig én** sykkel|
-|`-o{`| ingen eller mange| `Sykler -\|\|--o{ Utleier`| én sykkel kan brukes i **ingen eller mange** utleier (på ikke overlappende tidsperioder)|
-|`-\|{`| en eller mange| `Ansatte }\|--o{ Prosjekter`| en ansatt kan delta i **ingen eller mange** prosjekter og et prosjekt skal ha **én eller mange** ansatte (problematisk å implementere)|
+|`\|\|`| nøyaktig én| `Sykler -\|\|..o{ Utleier`| én utleie/tur har **nøyaktig én** sykkel|
+|`-o{`| ingen eller mange| `Sykler -\|\|..o{ Utleier`| én sykkel kan brukes i **ingen eller mange** utleier (på ikke overlappende tidsperioder)|
+|`-\|{`| en eller mange| `Ansatte }\|..o{ Prosjekter`| en ansatt kan delta i **ingen eller mange** prosjekter og et prosjekt skal ha **én eller mange** ansatte (problematisk å implementere)|
+
+Forhold:
+- `--` **identifiserende** (fremmednøkkelen er en del av primærnøkkelen og ikke NULL) 
+  - eksempel: `Kino -||--o{ Kinosal` i følgende modell:
+
+```
+Kino -||--o{ Kinosal
+Kino (kino_navn (PK), telefon)
+Kinosal (kino_navn (PK,FK), kinosal_nr (PK), antall_plasser)
+```
+
+- `..` **ikke-identifiserende** (fremmednøkkel er ikke en del av primærnøkkelen og den kan være NULL)
+  - eksempel: `Sykler -\|\|..o{ Utleier` (fremmednøkkelen i Utleier mot Sykler er ikke en del av primærnøkkelen til Utleier)
+
 
 Unicode tegn som brukes i notasjonen
 - `|` vertical line, U+007C
@@ -84,6 +104,7 @@ Unicode tegn som brukes i notasjonen
 - `{` left curly bracket {, U+007B
 - `}` right curly bracket }, U+007D
 - `-` Hyphen-Minus -, U+002D
+- `.` Full Stop ., U+002E
 
 
 **b) Normalisering (8 %)**
