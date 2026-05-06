@@ -30,7 +30,7 @@ Følgende tabeller er relevante for oppgavene:
 - `belop_nevner` (BIGINT)
 
 **Valutaer**
-- `kode` (CHAR(3), PK, f.eks. 'NOK', 'USD', 'EUR')
+- `valuta_kode` (CHAR(3), PK, f.eks. 'NOK', 'USD', 'EUR')
 - `navn` (TEXT)
 
 *Merk: Beløp lagres som en brøk for å unngå avrundingsfeil. Den faktiske verdien er `belop_teller / belop_nevner`.*
