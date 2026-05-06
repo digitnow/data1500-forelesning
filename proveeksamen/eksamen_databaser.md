@@ -54,7 +54,7 @@ Skriv en SQL-spørring som lister ut `bilagsnummer`, `posteringsdato` og `beskri
 **c) Aggregering og JOIN (7 %)**
 Skriv en SQL-spørring som beregner den totale saldoen for hver konto. Resultatet skal inneholde `kontonummer`, `navn` og `saldo`. Saldoen beregnes som summen av `(belop_teller / belop_nevner)` for alle posteringer knyttet til kontoen. Kontoer uten posteringer trenger ikke å være med i resultatet.
 
-**b) Aggregering med NULL-håndtering (7 %)**
+**d) Aggregering med NULL-håndtering (7 %)**
 Skriv en SQL-spørring som beregner antall underkontoer for hver hovedkonto. Resultatet skal vise `kontonummer` og `navn` for hovedkontoen, samt antallet direkte underkontoer (`antall_underkontoer`). Hovedkontoer er definert som kontoer der `overordnet_guid` er NULL. Kontoer som ikke har noen underkontoer skal også være med i resultatet (med antall 0).
 
 **e) Rekursiv CTE (13 %)**
