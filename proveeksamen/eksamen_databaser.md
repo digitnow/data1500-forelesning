@@ -95,7 +95,7 @@ Kinosal (kino_navn (PK,FK), kinosal_nr (PK), antall_plasser)
 ```
 
 - `..` **ikke-identifiserende** (fremmednøkkel er ikke en del av primærnøkkelen og den kan være NULL)
-  - eksempel: `Sykler -\|\|..o{ Utleier` (fremmednøkkelen i Utleier mot Sykler er ikke en del av primærnøkkelen til Utleier) i følgende modell:
+  - eksempel: `Sykler -||..o{ Utleier` (fremmednøkkelen i Utleier mot Sykler er ikke en del av primærnøkkelen til Utleier) i følgende modell:
 
 ``` 
 Sykler (sykkel_id (PK), status, sist_vedlikeholdt)
