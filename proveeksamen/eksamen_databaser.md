@@ -127,7 +127,7 @@ Anta følgende funksjonelle avhengigheter:
 Forklar hvilken normalform tabellen `FakturaOversikt` befinner seg på (1NF, 2NF eller 3NF), og hvorfor. Normaliser deretter databasen til 3NF. Vis de nye tabellene med primærnøkler (markert med PK) og fremmednøkler (markert med FK). For eksempel, `faktura_nr (PK), vare_nr (FK) ...`
 
 **c) Relasjonsalgebra (6 %)**
-Skriv et relasjonsalgebraisk uttrykk som finner `kunde_navn` for alle kunder som har kjøpt en vare med `vare_navn` lik 'Bærbar PC'. Du kan ta utgangspunkt i de normaliserte tabellene fra oppgave a).
+Skriv et relasjonsalgebraisk uttrykk som finner `kunde_navn` for alle kunder som har kjøpt en vare med `vare_navn` lik 'Bærbar PC'. Ta utgangspunkt i de normaliserte tabellene fra oppgave b).
 
 ---
 
