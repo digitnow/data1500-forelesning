@@ -4,6 +4,8 @@
 
 **Hjelpemidler:** Ingen
 
+*Relevant på eksamen: I denne oppgaven kan du benytte kodeeditor for å skrive kode i ulike programmeringsspråk. Klikk på "administrer vedlegg" øverst på siden. Velg "nytt vedlegg", deretter "kode". Når du er ferdig, husk å klikke "lagre". Koden legges til som et vedlegg i besvarelsen din. Vi anbefaler at du også kopierer koden og limer den inn i essayfeltet.*
+
 ## Introduksjon til datamodellen
 Denne eksamenen tar utgangspunkt i en forenklet versjon av NS 4102-modellen for dobbelt bokholderi. Modellen brukes til å registrere økonomiske transaksjoner for en bedrift.
 
