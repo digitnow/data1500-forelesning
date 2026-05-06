@@ -99,7 +99,7 @@ Kinosal (kino_navn (PK,FK), kinosal_nr (PK), antall_plasser)
 
 ``` 
 Sykler (sykkel_id (PK), status, sist_vedlikeholdt)
-Utleier/Turer (tur_id (PK), sykkel_id, bruker_id, start_stasjon, slutt_stasjon, start_tid, slutt_tid, pris)
+Utleier/Turer (tur_id (PK), sykkel_id (FK), bruker_id (FK), start_stasjon (FK), slutt_stasjon (FK), start_tid, slutt_tid, pris)
 ``` 
 
 
