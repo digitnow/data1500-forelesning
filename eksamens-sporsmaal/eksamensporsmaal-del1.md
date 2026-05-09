@@ -1,10 +1,10 @@
 # Øvingssett for eksamen i DATA1500 våren 2026 (del 1, 50 spørsmål)
 
-Konseptuell og logisk datamodellering basert på Modelller fra tre ulike domener for å gi en bredde i modelleringstrening. 
+Konseptuell og logisk datamodellering basert på modeller fra tre ulike domener for å gi en bredde i modelleringstrening. 
 
-## Modelllbeskrivelse (tre domener)
+## Modellbeskrivelse (tre domener)
 
-Modelllene er definert med et tabellnavn med stor forbokstav og i flertall (Sykler, Stasjoner osv.), og med kolonnenavn (attributter) med "snake_case"-notasjon og små bokstaver. Ingen primær- eller fremmednøkler er markert.
+Modellene er definert med et tabellnavn med stor forbokstav og i flertall (Sykler, Stasjoner osv.), og med kolonnenavn (attributter) med "snake_case"-notasjon og små bokstaver. Ingen primær- eller fremmednøkler er markert.
 
 ### Modell A: Bysykkel-utleie
 ``` 
@@ -36,57 +36,57 @@ Prosjektdeltakelse (ansatt_id, prosjekt_id, rolle, timer_allokert)
 ### Konseptuell Modellering og Entiteter
 
 Konseptuell Modellering innebærer 
-- å finne begreper og navn, som brukes for entitetene (eller objektene) i en dataModelll,
+- å finne begreper og navn, som brukes for entitetene (eller objektene) i en datamodell,
 - å bruke diagrammer (ER og/eller UML),
 - å angi nøkkelattributter, relasjonstyper (1:1, 1:N, N:M) og kardinalitet (eksempel: en Sykkel kan ha ingen eller mange Utleier/Turer, en Tur kan ha nøyaktig en sykkel),
 - å inkludere forretningsregler og identitetsbegrensninger (unikhet, påkrevde verdier),
-- å forklare normalisering for skape et grunnlag for en "fysisk" Modelll.
+- å forklare normalisering for skape et grunnlag for en "fysisk" modell.
 
-OBS! Når det blir spurt om å gi eksempler fra en spesifikk Modelll, betyr det ikke at all nødvendig informasjon er gitt i modellbeskrivelsene. Det forventes at studentene selv foreslår entiteter, attributter, forhold osv. som er nødvendig for å besvare spørsmål.  
+OBS! Når det blir spurt om å gi eksempler fra en spesifikk modell, betyr det ikke at all nødvendig informasjon er gitt i modellbeskrivelsene. Det forventes at studentene selv foreslår entiteter, attributter, forhold osv. som er nødvendig for å besvare spørsmål.  
 
 1. I Modell C (Bedrift), hvordan vil du modellere at en ansatt kan ha flere telefonnumre?
 
 Tester forståelsen av normalisering, fordeler og ulemper av flerverdiattributter og spesielle objekttyper (eksempel: ARRAY i PostgreSQL). 
 
-2. Hva er en surrogatnøkkel, og hvorfor brukes det ofte i stedet for "naturlige" nøkler? Gi eksempel fra Modelll B (E-sport).
+2. Hva er en surrogatnøkkel, og hvorfor brukes det ofte i stedet for "naturlige" nøkler? Gi eksempel fra modell B (E-sport).
 
 Tester kjennskap til forskjell på "naturlige" og surrogatnøkler, samt kjennskap til fordeler og ulemper med surrogatnøkkler. 
 
-3. I Modelll A (Bysykkel), hvilken entitet fungerer som en koblingstabell (assosiativ entitet), og hvilke entiteter kobler den sammen?
+3. I modell A (Bysykkel), hvilken entitet fungerer som en koblingstabell (assosiativ entitet), og hvilke entiteter kobler den sammen?
 
 Tester forståelsen av assosiative entiteter (koblingstabeller).
 
-4. Hvordan Modelllerer man en rekursiv (selv-reflekterende) relasjon? Gi et eksempel på hvordan dette kan brukes i Modell C (Bedrift) for å vise hvem som er sjefen til hvem.
+4. Hvordan modellerer man en rekursiv (selv-reflekterende) relasjon? Gi et eksempel på hvordan dette kan brukes i Modell C (Bedrift) for å vise hvem som er sjefen til hvem.
 
-Tester forståelse av modellering av hierarkiske strukturer i en tabell (relasjonsModelllen).
+Tester forståelse av modellering av hierarkiske strukturer i en tabell (relasjonsmodellen).
 
-5. Hva er en sammensatt attributt (composite attribute)? Gi et eksempel på hvordan adresse kunne vært Modelllert som dette for en Bruker i Modelll A (Bysykkel).
+5. Hva er en sammensatt attributt (composite attribute)? Gi et eksempel på hvordan adresse kunne vært modellert som dette for en Bruker i Modell A (Bysykkel).
 
 Tester forståelse av sammensatte attributter. Sammensatte attributter bryter med høyere normalformer, men kan noen ganger beskrive systemet bedre.
 
-6. Hva er forskjellen på en sterk og en svak entitet? Gi eksempel fra Modelll A (Bysykkel).
+6. Hva er forskjellen på en sterk og en svak entitet? Gi eksempel fra Modell A (Bysykkel).
 
 Tester forståelsen av modelleringsdetaljer som gjelder avhengighetsforhold mellom entiteter. 
 
 ### Relasjoner og Kardinalitet
 
-7. Forklar kardinaliteten mellom Avdelinger og Ansatte i Modelll C (Bedrift). 
+7. Forklar kardinaliteten mellom Avdelinger og Ansatte i Modell C (Bedrift). 
 
 Tester forståelse av begrepet kardinalitet.
 
-8. I Modelll B (E-sport), hva er kardinaliteten mellom Spillere og Lop? Hvordan løses dette i en relasjonsdatabase? 
+8. I Modell B (E-sport), hva er kardinaliteten mellom Spillere og Lop? Hvordan løses dette i en relasjonsdatabase? 
 
 Tester forståelse av løsning for mange til mange forhold i en relasjonsdatabase.
 
 9. Hva betyr "total deltakelse" i et ER-diagram (entiteter og forhold til andre entiteter er vist med symboler eller tegning)? Må Sykler ha en totaldeltakelse i Uleier/Turer?
 
 Tester forståelsen av typer forhold mellom entiteter:
-- 1:N en til mange forhold kan implementeres vha. fremmednøkkel på "mange"-siden, dvs. hvis en ansatt må tilhøre en og bare en avdeling (minimumskardinalitet på "en"-siden er nøyaktig en `||`), så kan dette Modellleres med fremmednøkkel som ikke kan være null på "mange"-siden, dvs. i Ansatte vil avdeling_id ha NOT NULL regelen.
+- 1:N en til mange forhold kan implementeres vha. fremmednøkkel på "mange"-siden, dvs. hvis en ansatt må tilhøre en og bare en avdeling (minimumskardinalitet på "en"-siden er nøyaktig en `||`), så kan dette Modelleres med fremmednøkkel som ikke kan være null på "mange"-siden, dvs. i Ansatte vil avdeling_id ha NOT NULL regelen.
 - 1:1 en til en forhold kan ikke implementeres med fremmednøkler (eksempel `Land ||--|| Hovedstad`, dvs. et land har nøyaktig ett hovedstad og et hovedstad tilhører nøyaktig ett land) og man må bruke andre mekanismer, f. eks. å utføre innsetting av data i begge tabellene som èn transaksjon eller å bruke triggere (PostgreSQL har `DEFERRABLE` valget for å markere fremmednøkler sjekkes først når COMMIT blir utført for èn transaksjon, mens i ANDRE DBHS kan man bruke triggere)
 
 10. Illustrer med symboler (se forklaring under) Crow's Foot-notasjonen for relasjon mellom Turneringer og Løp i Modell B (E-sport).
 
-Tester kunnskap/ferdighet til å bruke relevante symboler for å illustrere forhold i en konseptuell Modelll (når man ikke kan tegne hverken på papir eller vha. datamaskin).
+Tester kunnskap/ferdighet til å bruke relevante symboler for å illustrere forhold i en konseptuell modell (når man ikke kan tegne hverken på papir eller vha. datamaskin).
 
 **Om notasjon (uten tegning, tekstuelt)**
 
@@ -103,7 +103,7 @@ Unicode tegn som brukes i notasjonen
 - `}` right curly bracket }, U+007D
 - `-` Hyphen-Minus -, U+002D
 
-11. I Modell C (Bedrift), en avdeling har én leder (som er ansatt). Hvordan Modellleres denne spesifikke 1:1-relasjonen uten å skape en sirkulær avhengighet ved innsetting av data? 
+11. I Modell C (Bedrift), en avdeling har én leder (som er ansatt). Hvordan modelleres denne spesifikke 1:1-relasjonen uten å skape en sirkulær avhengighet ved innsetting av data? 
 
 Basert på Modell C (Bedrift), skriv SQL kommandoer for å lage de to entitetene med de nødvendige attributtene og vis hvordan man kan registrere at 'Bjørn Samuelson' leder avdeling 'Aalesund'.
 
@@ -171,19 +171,19 @@ Tester forståelsen av bruken av fremmednøkler for å tilfredsstille spesifikke
 
 ### Avansert Modellering og historikk
 
-19. Bysykkel-selskapet (Modell A) ønsker å spore historikken til sykkelens status (f.eks. når den gikk fra "Aktiv" til "På verksted"). Hvordan må Modelllen utvides for å støtte dette?
+19. Bysykkel-selskapet (Modell A) ønsker å spore historikken til sykkelens status (f.eks. når den gikk fra "Aktiv" til "På verksted"). Hvordan må modellen utvides for å støtte dette?
 
-Tester forståelse for lagring av historikken i en Modelll som er satt i produksjon.
+Tester forståelse for lagring av historikken i en modell som er satt i produksjon.
 
-20. I Modell C (Bedrift), hvordan Modelllerer du at en ansatt bytter avdeling over tid, og man trenger å vite hvilken avdeling de jobbet i på en bestemt dato?
+20. I Modell C (Bedrift), hvordan modellerer du at en ansatt bytter avdeling over tid, og man trenger å vite hvilken avdeling de jobbet i på en bestemt dato?
 
-Tester forståelse for lagring av historikken i en Modelll som er satt i produksjon.
+Tester forståelse for lagring av historikken i en modell som er satt i produksjon.
 
 21. Modell B (E-sport) trenger å lagre telemetridata (fart, posisjon) 60 ganger i sekundet per spiller per løp. Horfor er en tradisjonell relasjonsdatabase dårlig egnet for dette, og hvordan bør det modelleres i stedet?
 
 Tester forståelsen om bruksscenarioer som ikke er egnet for relasjonsdatabaser og kunnskapen om alternative løsninger.
 
-22. Hvordan Modelllerer man en hierarki med uendelin dybde (f.eks. kategorier av utstyr i Modell C (Bedrift)).
+22. Hvordan modellerer man en hierarki med uendelin dybde (f.eks. kategorier av utstyr i Modell C (Bedrift)).
 
 Tester kunnskapen om modellering av rekursjon i SQL. 
 
