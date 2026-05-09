@@ -161,7 +161,7 @@ Eksempel: for relasjon Brukere er brukernavn den eneste  kandidatnøkkelen; et a
 
 Primærnøkkel: en valgt kandidatnøkkel
 
-Eksempel: for relasjonen Brukere er det kun brukernavn som er primærnøkkel; for relasjonen Emner man velge blant de to kandidatnøklene, for eksempel (fagkode, emnenummer)
+Eksempel: for relasjonen Brukere er det kun brukernavn som er primærnøkkel; for relasjonen Emner kan man velge blant de to kandidatnøklene `fagkode, emnenummer`.
 
 Mye av dette kan løses ved å bruke en surrogatnøkkel, som da er både supernøkkel, kandidatnøkkel og primærnøkkel.
 
