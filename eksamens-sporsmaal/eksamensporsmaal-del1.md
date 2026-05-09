@@ -81,7 +81,7 @@ Tester forståelse av løsning for mange til mange forhold i en relasjonsdatabas
 9. Hva betyr "total deltakelse" i et ER-diagram (entiteter og forhold til andre entiteter er vist med symboler eller tegning)? Må Sykler ha en totaldeltakelse i Uleier/Turer?
 
 Tester forståelsen av typer forhold mellom entiteter:
-- 1:N en til mange forhold kan implementeres vha. fremmednøkkel på "mange"-siden, dvs. hvis en ansatt må tilhøre en og bare en avdeling (minimumskardinalitet på "en"-siden er nøyaktig en `||`), så kan dette Modelleres med fremmednøkkel som ikke kan være null på "mange"-siden, dvs. i Ansatte vil avdeling_id ha NOT NULL regelen.
+- 1:N en til mange forhold kan implementeres vha. fremmednøkkel på "mange"-siden, dvs. hvis en ansatt må tilhøre en og bare en avdeling (minimumskardinalitet på "en"-siden er nøyaktig en `||`), så kan dette modelleres med fremmednøkkel som ikke kan være null på "mange"-siden, dvs. i Ansatte vil avdeling_id ha NOT NULL regelen.
 - 1:1 en til en forhold kan ikke implementeres med fremmednøkler (eksempel `Land ||--|| Hovedstad`, dvs. et land har nøyaktig ett hovedstad og et hovedstad tilhører nøyaktig ett land) og man må bruke andre mekanismer, f. eks. å utføre innsetting av data i begge tabellene som èn transaksjon eller å bruke triggere (PostgreSQL har `DEFERRABLE` valget for å markere fremmednøkler sjekkes først når COMMIT blir utført for èn transaksjon, mens i ANDRE DBHS kan man bruke triggere)
 
 10. Illustrer med symboler (se forklaring under) Crow's Foot-notasjonen for relasjon mellom Turneringer og Løp i Modell B (E-sport).
