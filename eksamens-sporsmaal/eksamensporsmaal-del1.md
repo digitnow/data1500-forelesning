@@ -183,7 +183,7 @@ Tester forståelse for lagring av historikken i en modell som er satt i produksj
 
 Tester forståelsen om bruksscenarioer som ikke er egnet for relasjonsdatabaser og kunnskapen om alternative løsninger.
 
-22. Hvordan modellerer man en hierarki med uendelin dybde (f.eks. kategorier av utstyr i Modell C (Bedrift)).
+22. Hvordan modellerer man en hierarki med uendelig dybde (f.eks. kategorier av utstyr i Modell C (Bedrift)).
 
 Tester kunnskapen om modellering av rekursjon i SQL. 
 
