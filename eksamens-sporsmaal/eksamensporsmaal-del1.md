@@ -150,7 +150,7 @@ Tester forståelsen av at kravene fra den reelle verden bestemmer detaljene i da
 
 Tester kunnskapen om hvordan velge nøkler for en relasjon / tabell. 
 
-Supernøkkel: mengde med attributter som alltid har unike verdier i en relasjon / tabell; en relasjon kan ha mange supernøkler og man har en supernøkkel, vil alle utvidelser også være supernøkkel; alle attributtene i en tabell danner alltid en supernøkkel.
+Supernøkkel: mengde med attributter som alltid har unike verdier i en relasjon / tabell; en relasjon kan ha mange supernøkler og hvis man har en supernøkkel, vil alle utvidelser også være en supernøkkel; alle attributtene i en relasjon / tabell danner alltid en supernøkkel.
 
 Eksempel: gitt følgende relasjon Brukere(brukernavn, fornavn, etternavn, adresse), kan man resonnere seg frem til at det er kun brukernavn som er en potensiell supernøkkel med den forutsetnignen av den er designet for å være unik innenfor den konteksten den skal brukes (Oslomet, for eksempel). Når det gjelder fornavn, etternavn og adresse, så kan alle disse potensielt være like for flere forekomster av Brukere. 
 Alle kombinasjoner mellom brukernavn og de andre attributtene er også en supernøkkel. 
