@@ -1,4 +1,4 @@
-# Løsningsforslag mock-eksamen
+# Løsningsforslag relevante eksamensspørsmål del 1
 
 1. Et korrekt svar her innebærer å foreslå en egen tabell for telefonnumre og definere et forhold mellom Ansatt og den nye tabellen med kardinalitet 1 ansatt:1 eller mange telefonnumre. Kan også modelleres me at en ansatt ikke trenger å ha et telefonnummer (Ansatte 1---0{ AnsatteTlfNumre). Se side 195-196 i pensumboken (5. utgave) om sammensatte, flerverdi- og avledede attributter. Bruken av funksjoner som er DBHS-avhengige er ikke en optimal løsning (i tilfelle man må migrere til andre DBHS).
 
