@@ -1001,10 +1001,10 @@ where extract(epoch from (slutt_tid - start_tid))/60 > 60
 
 ### Operatorprioritet
 
-1. - (unær minus, f.eks -3)
-2. * / % 
-3. + - (binære operatorer f.eks. 2-3)
-4. < <= > >= = <>
+1. `-` (unær minus, f.eks -3)
+2. `* / %`
+3. `+ -` (binære operatorer f.eks. 2-3)
+4. `< <= > >= = <>`
 5. NOT
 6. AND
 7. OR
