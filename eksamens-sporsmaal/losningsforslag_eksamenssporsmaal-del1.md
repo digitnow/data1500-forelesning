@@ -964,7 +964,7 @@ group by bruker_id;
 -- se under for en løsning for beregninger med verdier av typen timestamptz
 with LangeTurer as ( 
 	select * from Utleier 
-	where extract(epoch from (slutt_tid - start_tid))/60 >= 60 
+	where extract(epoch from (slutt_tid - start_tid))/60 > 60 
 		and slutt_tid is not null 
 )
 select bruker_id, count(*)
