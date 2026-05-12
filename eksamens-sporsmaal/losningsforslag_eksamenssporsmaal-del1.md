@@ -38,11 +38,11 @@ Løses med koblingstabellen Deltakelser.
 
 9. Se side 226-227 for en diskusjon om `total deltakelse`. I Modell A (Bysykkel) hadde en totaldeltakelse vært hvis man ikke kunne registrere en sykkel uten at man samtidig måtte registrere minst en (eller flere) utleier. En naturlig måte å modellere i dette tilfelle skal være at en sykkel kan ha ingen eller mange utleier. Dvs. Sykler trenger ikke å delta i forholdet til Utleier/Turer. I Utleier må sykkel_id ha en verdi som finnes i Sykler og kan ikke være null.
 
-10. `Turneringer ||—|{ Løp` (1:N) En turnering må ha minst ett løp, dvs. man kan ikke registrere en turnering uten å registrere et løp samtidig. Hvis forholdet er `Turneringer ||—o{ Løp` så kan man definere fremmednøkkel direkte i `CREATE TABLE Lop (...);`. 
-I praksis er `||—|{` på mange-siden i et ER-diagram et designmål, ikke nødvendigvis noe som håndheves i databasen fra dag én. De fleste systemer:
+10. `Turneringer ||..|{ Løp` (1:N) En turnering må ha minst ett løp, dvs. man kan ikke registrere en turnering uten å registrere et løp samtidig. Hvis forholdet er `Turneringer ||..o{ Løp` så kan man definere fremmednøkkel direkte i `CREATE TABLE Lop (...);`. 
+I praksis er `||..|{` på mange-siden i et ER-diagram et designmål, ikke nødvendigvis noe som håndheves i databasen fra dag én. De fleste systemer:
 - Håndhever NOT NULL på FK (løp må ha en turnering) — deklarativt.
 - Håndhever "minst ett løp" via applikasjonslogikk eller trigger — imperativt.
-- Aksepterer at en nyopprettet turnering midlertidig kan ha null løp (i løpet av én transaksjon) mens løpene legges inn (deferrable kan brukes for sirkulære avhengigheter som `Land ||--|| Hovedstad` og for aggregerte betingelser som "minst ett løp", der turnering og lop har ett forhold hvor de avhenger av hverandre `Turneringer ||—|{ Løp`).
+- Aksepterer at en nyopprettet turnering midlertidig kan ha null løp (i løpet av én transaksjon) mens løpene legges inn (deferrable kan brukes for sirkulære avhengigheter som `Land ||--|| Hovedstad` og for aggregerte betingelser som "minst ett løp", der turnering og lop har ett forhold hvor de avhenger av hverandre `Turneringer ||..|{ Løp`).
 
 
 ```sql 
@@ -561,7 +561,9 @@ Prosjekter (prosjekt_id, navn, budsjett, start_dato, slutt_dato)
 Prosjektdeltakelse (ansatt_id, prosjekt_id, rolle, timer_allokert)
 ``` 
 
-WHERE filtrerer rader før agreggering, HAVING filtrerer grupper etter aggregering. HAVING kan bruke agreggatfunksjoner (SUM, COUNT, AVG osv.), mens WHERE kan ikke det. WHERE skal alltid være før HAVING i en SQL-spørring.
+- WHERE filtrerer rader før agreggering, HAVING filtrerer grupper etter aggregering.
+- HAVING kan bruke agreggatfunksjoner (SUM, COUNT, AVG osv.), mens WHERE kan ikke det.
+- WHERE skal alltid være før HAVING i en SQL-spørring.
 
 Eksempel: Finn totalt antall timer allokert per prosjekt, men bare for ansatte i avdeling 1. 
 
@@ -742,9 +744,9 @@ having sum(timer_allokert) > 100;
 
 42. Skriv en spørring som lister ut alle ansatte sammen med navnet på deres avdeling. 
 
-Input: hvilke tabeller? To tabeller, Ansatte og Avdelinger.
-Join: En ansatt tilhører kun en avdeling, derfor må det være en avdeling på ansatt og det er ikke behov for left join. 
-Projeksjon: navn fra både Ansatte og Avdelinger. Gjelder Modell C (Bedrift).
+- Input: hvilke tabeller? To tabeller, Ansatte og Avdelinger.
+- Join: En ansatt tilhører kun en avdeling, derfor må det være en avdeling på ansatt og det er ikke behov for left join. 
+- Projeksjon: navn fra både Ansatte og Avdelinger. Gjelder Modell C (Bedrift).
 
 ```sql 
 select a.navn, av.navn 
@@ -834,10 +836,10 @@ Prosjekter (prosjekt_id, navn, budsjett, start_dato, slutt_dato)
 Prosjektdeltakelse (ansatt_id, prosjekt_id, rolle, timer_allokert)
 ``` 
 
-Input: Ansatte og Avdelinger
-Output (projeksjon): Ansatte.navn
-Join (inner): kobler Ansatte.ansatt_id med Avdelinger.leder_id
-Seleksjon: Avdelinger.navn er lik 'IT'
+- Input: Ansatte og Avdelinger
+- Output (projeksjon): Ansatte.navn
+- Join (inner): kobler Ansatte.ansatt_id med Avdelinger.leder_id
+- Seleksjon: Avdelinger.navn er lik 'IT'
 
 ```sql
 select a.navn 
@@ -855,10 +857,10 @@ Brukere (bruker_id, navn, telefon, betalingsmetode)
 Utleier/Turer (tur_id, sykkel_id, bruker_id, start_stasjon, slutt_stasjon, start_tid, slutt_tid, pris)
 ``` 
 
-Input: Sykler, Stasjoner, Utleier
-Output (projeksjon): Sykler.sykkel_id, Stasjoner.navn
-Join: kobler Sykler.sykkel_id med Utleier.sykkel_id og kobler Utleier.slutt_stasjon = Stasjon.stasjon_ids
-Seleksjon: max date for slutt_tid 
+- Input: Sykler, Stasjoner, Utleier
+- Output (projeksjon): Sykler.sykkel_id, Stasjoner.navn
+- Join: kobler Sykler.sykkel_id med Utleier.sykkel_id og kobler Utleier.slutt_stasjon = Stasjon.stasjon_ids
+- Seleksjon: max date for slutt_tid 
 
 Må bruke SQL-spørring med flere trinn og da er CTE egnet form. 
 Problemet:
