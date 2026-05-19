@@ -1016,7 +1016,7 @@ where extract(epoch from (slutt_tid - start_tid))/60 > 60
 3. WHERE     — filtrer enkeltposter
 4. GROUP BY  — grupper de gjenværende postene
 5. HAVING    — filtrer grupper
-6. SELECT    — velg kolonner og beregn aggregater
+6. SELECT    — velg kolonner og beregn aggregater (vindusfunksjoner etter select)
 7. ORDER BY  — sorter resultatet
 8. LIMIT     — begrens antall rader
 
