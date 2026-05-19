@@ -1041,7 +1041,7 @@ where extract(epoch from (slutt_tid - start_tid))/60 > 60
 - UNION ∪, SNITT ∩ og DIFFERANSE ∖ kan kun brukes på relasjoner som har nøyaktig de samme attributtene
 
 **Nyttige tegn for relasjonsalbebra**
-```
+```math
 ∪ union 222A
 ∩ intersection 2229)
 ∖ Set minus 2216
@@ -1069,6 +1069,7 @@ where extract(epoch from (slutt_tid - start_tid))/60 > 60
 ≠ not equal 2260
 ```
 
+*Sensorveiledning:* Full pott for riktig bruk av projeksjon ($\pi$), seleksjon ($\sigma$) og naturlig join/equi-join ($\bowtie$).
 ### Datatyper i PostgreSQL
 
 Fra https://www.postgresql.org/docs/current/datatype.html
