@@ -1041,7 +1041,7 @@ where extract(epoch from (slutt_tid - start_tid))/60 > 60
 - UNION ∪, SNITT ∩ og DIFFERANSE ∖ kan kun brukes på relasjoner som har nøyaktig de samme attributtene
 
 **Nyttige tegn for relasjonsalbebra**
-```math
+```
 ∪ union 222A
 ∩ intersection 2229)
 ∖ Set minus 2216
@@ -1050,9 +1050,14 @@ where extract(epoch from (slutt_tid - start_tid))/60 > 60
 ∑ N-ary summation 2211
 ∕ Division slash 2215
 − Minus sign 2212
-𝜎 mathematical greek small sigma 1D70E
-𝜋 mathematical greek small pi 1D70B
-𝜌 mathematical greek rho 1D70C
+```
+
+```math
+\sigma mathematical greek small sigma 1D70E
+\pi mathematical greek small pi 1D70B
+\rho mathematical greek rho 1D70C
+```
+```
 𝛱 stor pi
 𝛴 stor sigma 
 ≔ colon equals 2254 (kan også skrives med "vanlige" tegn :=)
